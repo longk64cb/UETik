@@ -3,14 +3,14 @@
     package="com.example.uetik">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
-
+s
 
     <application
         android:allowBackup="true"
         android:requestLegacyExternalStorage="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_albumart"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_albumart"
         android:supportsRtl="true"
         android:theme="@style/Theme.UETik">
         <activity
