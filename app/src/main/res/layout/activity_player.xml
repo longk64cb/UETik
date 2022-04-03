@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10"
+    android:theme="@style/statusBarStyle">
+
+    <com.cleveroad.audiovisualization.GLAudioVisualizationView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+
+        android:id="@+id/visualizer_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:av_backgroundColor="@color/av_color_bg"
+        app:av_bubblesPerLayer="16"
+        app:av_bubblesRandomizeSizes="true"
+        app:av_bubblesSize="@dimen/bubble_size"
+        app:av_layersCount="6"
+        app:av_wavesCount="7"
+        app:av_wavesFooterHeight="@dimen/footer_height"
+        app:av_wavesHeight="@dimen/wave_height"></com.cleveroad.audiovisualization.GLAudioVisualizationView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="10">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="6">
+
+            <com.mikhaellopez.circularimageview.CircularImageView
+                android:id="@+id/alterAlbumArt"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/albumart">
+
+            </com.mikhaellopez.circularimageview.CircularImageView>
+
+            <com.mikhaellopez.circularimageview.CircularImageView
+                android:id="@+id/albumArtPlayer"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/albumart">
+
+            </com.mikhaellopez.circularimageview.CircularImageView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="10dp">
+
+                <TextView
+                    android:id="@+id/txtPlayingSongName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="Song name"
+                    android:textSize="40dp"
+                    android:maxLines="1"
+                    android:textAlignment="center"
+                    >
+
+                </TextView>
+                <TextView
+                    android:id="@+id/txtPlayingArtistName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Artist"
+                    android:textSize="23dp"
+                    android:textColor="@color/gray"
+                    android:textAlignment="center"
+                    >
+
+                </TextView>
+
+        </LinearLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/currentDuration"
+                android:layout_width="45dp"
+                android:layout_height="50dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/waveformSeekBar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/white"
+                android:layout_marginHorizontal="10dp"
+                android:textAlignment="center"
+                android:gravity="center">
+
+            </TextView>
+
+            <com.masoudss.lib.WaveformSeekBar
+                android:id="@+id/waveformSeekBar"
+                android:layout_width="280dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:wave_background_color="@color/white"
+                app:wave_corner_radius="2dp"
+                app:wave_gap="1dp"
+                app:wave_gravity="center"
+                app:wave_max_progress="100"
+                app:wave_min_height="5dp"
+                app:wave_progress="33"
+                app:wave_progress_color="@color/av_color_bg"
+                app:wave_width="2dp" />
+
+            <TextView
+                android:id="@+id/endSong"
+                android:layout_width="45dp"
+                android:layout_height="50dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/waveformSeekBar"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/white"
+                android:layout_marginHorizontal="10dp"
+                android:textAlignment="center"
+                android:gravity="center">
+
+            </TextView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:paddingHorizontal="30dp">
+                <Button
+                    android:id="@+id/prevSong"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_baseline_skip_previous_24"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:backgroundTint="@color/white">
+
+                </Button>
+
+                <Button
+                    android:id="@+id/playSong"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_baseline_pause_circle_outline_24"
+                    android:backgroundTint="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/prevSong"
+                    app:layout_constraintRight_toLeftOf="@id/nextSong"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                </Button>
+                <Button
+                    android:id="@+id/nextSong"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_baseline_skip_next_24"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:backgroundTint="@color/white">
+
+                </Button>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
+
+
+

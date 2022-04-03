@@ -4,12 +4,14 @@ import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -30,6 +33,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.uetik.R;
 import com.example.uetik.databinding.FragmentHomeBinding;
 import com.example.uetik.models.Song;
+import com.example.uetik.ui.PlayerActivity;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -38,9 +42,11 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Random;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements Serializable{
 
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
@@ -61,8 +67,6 @@ public class HomeFragment extends Fragment {
         if (listView != null) {
             Log.v("ListView", "Found listView home");
         }
-
-//        System.out.println(listView);
 
         runtimePermission();
 
@@ -179,7 +183,7 @@ public class HomeFragment extends Fragment {
             textArtist.setText(songList.get(i).artist);
             if (songList.get(i).albumArt != Uri.EMPTY) {
                 albumArt.setImageURI(songList.get(i).albumArt);
-                Log.v("Test", songList.get(i).albumArt.toString());
+//                Log.v("Test", songList.get(i).albumArt.toString());
             } else {
                 albumArt.setImageResource(R.drawable.ic_baseline_music_note_24);
                 Log.v("Test", "bruh");
@@ -203,7 +207,7 @@ public class HomeFragment extends Fragment {
             cursor.moveToFirst();
             Long albumId = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
 //            if (albumId != null)
-//            Log.v("Test", albumId.toString());
+//            Log.v("Test", String.format("%d", cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)));
 //            else Log.v("Test", "Khong");
             Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
             Uri albumArtUri = ContentUris.withAppendedId(sArtworkUri, albumId);
@@ -226,22 +230,58 @@ public class HomeFragment extends Fragment {
                     (android.provider.MediaStore.Audio.Media.TITLE);
             int artistColumn = trackCursor.getColumnIndex
                     (android.provider.MediaStore.Audio.Media.ARTIST);
-            int albumArtColumn = trackCursor.getColumnIndex
+            int path = trackCursor.getColumnIndex
                     (MediaStore.Audio.Media.DATA);
+            int duration = trackCursor.getColumnIndex
+                    (MediaStore.Audio.Media.DURATION);
             //add songs to list
             do {
                 String thisTitle = trackCursor.getString(titleColumn);
                 String thisArtist = trackCursor.getString(artistColumn);
-                File thisFile = new File(trackCursor.getString(albumArtColumn));
+                File thisFile = new File(trackCursor.getString(path));
                 Uri thisArt = getArtUriFromMusicFile(getContext(), thisFile);
-                songList.add(new Song(thisTitle, thisArtist, thisArt));
+                String thisDuration = trackCursor.getString(duration);
+//                Log.v("Test", thisDuration);
+                songList.add(new Song(thisTitle, thisArtist, thisArt, thisFile.getPath(), thisDuration));
             }
             while (trackCursor.moveToNext());
             customAdapter customAdapter = new customAdapter();
             listView.setAdapter(customAdapter);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    TextView songNameTxt = (TextView) view.findViewById(R.id.txtSongName);
+                    TextView artistNameTxt = (TextView) view.findViewById(R.id.txtArtistName);
+                    ImageView albumImgView = (ImageView) view.findViewById(R.id.imgSong);
+                    String songName = (String) songNameTxt.getText();
+                    String artistName = (String) artistNameTxt.getText();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("songList", (Serializable) songList);
+                    Drawable albumArt = (Drawable) albumImgView.getDrawable();
+                    Log.v("Test", songList.get(i).albumArt.getPath());
+                    startActivity(new Intent(getActivity().getApplicationContext(), PlayerActivity.class)
+                    .putExtra("songName", songName)
+                            .putExtra("songList", bundle)
+                            .putExtra("artistName", artistName)
+                            .putExtra("albumArt", songList.get(i).albumArt.toString())
+                    .putExtra("pos", i));
+                }
+            });
         }
 
     }
 
+    private String getRealPathFromURI(Uri contentURI) {
+        Cursor cursor = getContext().getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            return contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+//            Log.v("Test", (String) idx);
+            return cursor.getString(idx);
+        }
+    }
 
 }
