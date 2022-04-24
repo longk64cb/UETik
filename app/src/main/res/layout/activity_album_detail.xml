@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment"
-    android:theme="@style/Theme.UETik">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.albums.AlbumDetail"
+    android:background="@color/primary_3">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="280dp"
         android:fitsSystemWindows="true"
         android:theme="@style/Theme.UETik">
 
@@ -18,10 +18,23 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            app:title="Home"
-            android:id="@+id/collapsing_toolbar"
+            app:title="Album name"
+            android:id="@+id/collapsing_toolbar_album_name"
             android:elevation="0dp"
             android:theme="@style/CustomToolbarTheme">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/albumart"
+                android:id="@+id/album_art_detail"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center"
+                app:layout_collapseMode="parallax"/>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/gradient"
+                android:src="@drawable/gradient_bg"/>
 
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
@@ -33,7 +46,6 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -41,7 +53,7 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <ListView
-            android:id="@+id/listViewSong"
+            android:id="@+id/listViewAlbumSong"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@android:color/transparent"
@@ -51,7 +63,5 @@
             android:scrollbars="vertical"
             android:visibility="visible"></ListView>
     </androidx.core.widget.NestedScrollView>
-
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

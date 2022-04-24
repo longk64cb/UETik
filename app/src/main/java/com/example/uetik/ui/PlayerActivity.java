@@ -27,11 +27,18 @@ import com.masoudss.lib.SeekBarOnProgressChanged;
 import com.masoudss.lib.WaveformSeekBar;
 
 import java.util.ArrayList;
+import java.util.Random;
+
+enum PlayMode {
+    SHUFFLE,
+    REPEAT,
+    REPEAT_ONE
+}
 
 public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
     View activityView;
-    Button btnPlay, btnNext, btnPrev;
+    Button btnPlay, btnNext, btnPrev, btnPlayMode;
     TextView txtSongName, txtArtistName, currentDuration, endSong;
 
     public static final String EXTRA_NAME = "songName";
@@ -48,6 +55,8 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
     private Handler handler = new Handler();
     private Thread playThread, prevThread, nextThread = new Thread();
 
+    public PlayMode playMode = PlayMode.REPEAT;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +70,7 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
         btnPlay = findViewById(R.id.playSong);
         btnPrev = findViewById(R.id.prevSong);
         btnNext = findViewById(R.id.nextSong);
+        btnPlayMode = findViewById(R.id.playModeBtn);
         audioVisualization = (AudioVisualization) findViewById(R.id.visualizer_view);
         waveformSeekBar = (WaveformSeekBar) findViewById(R.id.waveformSeekBar);
         albumArt = findViewById(R.id.albumArtPlayer);
@@ -86,16 +96,37 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
 
         mediaPlayer = MediaPlayer.create(getApplicationContext(), songUri);
         mediaPlayer.start();
+        mediaPlayer.setOnCompletionListener(this);
 
-        int durationTotal = Integer.parseInt((String) songList.get(position).duration) / 1000;
+        int durationTotal = Integer.parseInt((String) songList.get(position).getDuration()) / 1000;
         endSong.setText(formatTime(durationTotal));
-        Log.v("Test", songList.get(position).duration);
+        Log.v("Test", songList.get(position).getDuration());
 
         waveformSeekBar.setOnProgressChanged(new SeekBarOnProgressChanged() {
             @Override
             public void onProgressChanged(@NonNull WaveformSeekBar waveformSeekBar, float v, boolean b) {
                 if (mediaPlayer != null && b) {
                     mediaPlayer.seekTo((int)v * 1000);
+                }
+            }
+        });
+
+        btnPlayMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (playMode) {
+                    case REPEAT:
+                        btnPlayMode.setBackgroundResource(R.drawable.repeat_one);
+                        playMode = PlayMode.REPEAT_ONE;
+                        break;
+                    case REPEAT_ONE:
+                        btnPlayMode.setBackgroundResource(R.drawable.shuffle);
+                        playMode = PlayMode.SHUFFLE;
+                        break;
+                    case SHUFFLE:
+                        btnPlayMode.setBackgroundResource(R.drawable.repeat);
+                        playMode = PlayMode.REPEAT;
+                        break;
                 }
             }
         });
@@ -170,6 +201,14 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
                 btnNext.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        switch (playMode) {
+                            case SHUFFLE:
+                                position = getRandom(songList.size() - 1);
+                                break;
+                            default:
+                                position = ((position + 1) % songList.size());
+                                break;
+                        }
                         nextBtnClicked();
                     }
                 });
@@ -196,7 +235,7 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
 
     private void playPauseBtnClicked() {
         if (mediaPlayer.isPlaying()) {
-            btnPlay.setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24);
+            btnPlay.setBackgroundResource(R.drawable.play);
             mediaPlayer.pause();
             audioVisualization.onPause();
             PlayerActivity.this.runOnUiThread(new Runnable() {
@@ -211,7 +250,7 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
                 }
             });
         } else {
-            btnPlay.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24);
+            btnPlay.setBackgroundResource(R.drawable.pause);
             mediaPlayer.start();
             audioVisualization.onResume();
             PlayerActivity.this.runOnUiThread(new Runnable() {
@@ -231,7 +270,6 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
     private void nextBtnClicked() {
         mediaPlayer.stop();
         mediaPlayer.release();
-        position = ((position + 1) % songList.size());
         setPlayingSongView();
         PlayerActivity.this.runOnUiThread(new Runnable() {
             @Override
@@ -245,9 +283,9 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
             }
         });
         if (mediaPlayer.isPlaying()) {
-            btnPlay.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24);
+            btnPlay.setBackgroundResource(R.drawable.pause);
         } else {
-            btnPlay.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24);
+            btnPlay.setBackgroundResource(R.drawable.pause);
         }
         mediaPlayer.start();
     }
@@ -255,7 +293,14 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
     private void prevBtnClicked() {
         mediaPlayer.stop();
         mediaPlayer.release();
-        position = ((position - 1) < 0 ? (songList.size() - 1) : (position - 1));
+        switch (playMode) {
+            case SHUFFLE:
+                position = getRandom(songList.size() - 1);
+                break;
+            default:
+                position = ((position - 1) < 0 ? (songList.size() - 1) : (position - 1));
+                break;
+        }
         setPlayingSongView();
         PlayerActivity.this.runOnUiThread(new Runnable() {
             @Override
@@ -269,23 +314,29 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
             }
         });
         if (mediaPlayer.isPlaying()) {
-            btnPlay.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24);
+            btnPlay.setBackgroundResource(R.drawable.pause);
         } else {
-            btnPlay.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24);
+            btnPlay.setBackgroundResource(R.drawable.pause);
         }
         mediaPlayer.start();
     }
 
     private void setPlayingSongView() {
-        songUri = Uri.parse(songList.get(position).songPath);
+        songUri = Uri.parse(songList.get(position).getSongPath());
         mediaPlayer = MediaPlayer.create(getApplicationContext(), songUri);
-        txtSongName.setText(songList.get(position).title);
-        txtArtistName.setText(songList.get(position).artist);
-        albumArt.setImageURI(songList.get(position).albumArt);
+        txtSongName.setText(songList.get(position).getTitle());
+        txtArtistName.setText(songList.get(position).getArtist());
+        albumArt.setImageURI(songList.get(position).getAlbumArt());
         waveformSeekBar.setMaxProgress(mediaPlayer.getDuration() / 1000);
-        int durationTotal = Integer.parseInt((String) songList.get(position).duration) / 1000;
+        int durationTotal = Integer.parseInt((String) songList.get(position).getDuration()) / 1000;
         endSong.setText(formatTime(durationTotal));
-        waveformSeekBar.setSampleFrom(songList.get(position).songPath);
+        waveformSeekBar.setSampleFrom(songList.get(position).getSongPath());
+        mediaPlayer.setOnCompletionListener(this);
+    }
+
+    private int getRandom(int i) {
+        Random random = new Random();
+        return random.nextInt(i + 1);
     }
 
     private Spannable setSpan(String string) {
@@ -306,7 +357,22 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
     }
 
     @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
-
+    public void onCompletion(MediaPlayer mp) {
+        switch (playMode) {
+            case SHUFFLE:
+                position = getRandom(songList.size() - 1);
+                break;
+            case REPEAT:
+                position = ((position + 1) % songList.size());
+                break;
+            case REPEAT_ONE:
+                break;
+        }
+        nextBtnClicked();
+//        if (mediaPlayer != null) {
+//            mediaPlayer = MediaPlayer.create(getApplicationContext(), songUri);
+//            mediaPlayer.start();
+//            mediaPlayer.setOnCompletionListener(this);
+//        }
     }
 }

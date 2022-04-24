@@ -5,10 +5,14 @@
       <map>
         <entry key="..\:/Android/UETik/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.21614583333333334" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/black_background_circle.xml" value="0.16944444444444445" />
+        <entry key="..\:/Android/UETik/app/src/main/res/drawable/favourite.xml" value="0.17407407407407408" />
+        <entry key="..\:/Android/UETik/app/src/main/res/drawable/gradient_bg.xml" value="0.17407407407407408" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/ic_albumart_background.xml" value="0.17407407407407408" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/ic_baseline_music_note_24.xml" value="0.13651315789473684" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/ic_baseline_pause_24.xml" value="0.16944444444444445" />
+        <entry key="..\:/Android/UETik/app/src/main/res/drawable/ic_baseline_pause_circle_outline_24.xml" value="0.17407407407407408" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/ic_baseline_play_arrow_24.xml" value="0.16944444444444445" />
+        <entry key="..\:/Android/UETik/app/src/main/res/drawable/ic_baseline_play_circle_outline_24.xml" value="0.17407407407407408" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/ic_baseline_skip_next_24.xml" value="0.16944444444444445" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/ic_baseline_skip_previous_24.xml" value="0.16944444444444445" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.21614583333333334" />
@@ -18,11 +22,20 @@
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/list_bg.xml" value="0.21614583333333334" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/list_item.xml" value="0.20925925925925926" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/next_song.xml" value="0.16944444444444445" />
+        <entry key="..\:/Android/UETik/app/src/main/res/drawable/optional.xml" value="0.17407407407407408" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/pause_song.xml" value="0.16944444444444445" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/play_song.xml" value="0.16944444444444445" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/prev_song.xml" value="0.16944444444444445" />
-        <entry key="..\:/Android/UETik/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Android/UETik/app/src/main/res/drawable/repeat.xml" value="0.17407407407407408" />
+        <entry key="..\:/Android/UETik/app/src/main/res/drawable/repeat_one.xml" value="0.17407407407407408" />
+        <entry key="..\:/Android/UETik/app/src/main/res/drawable/shuffle.xml" value="0.17407407407407408" />
+        <entry key="..\:/Android/UETik/app/src/main/res/drawable/songMenu.xml" value="0.17407407407407408" />
+        <entry key="..\:/Android/UETik/app/src/main/res/drawable/song_menu.xml" value="0.17407407407407408" />
+        <entry key="..\:/Android/UETik/app/src/main/res/layout/activity_album_detail.xml" value="0.1597222222222222" />
+        <entry key="..\:/Android/UETik/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Android/UETik/app/src/main/res/layout/activity_player.xml" value="0.16666666666666666" />
+        <entry key="..\:/Android/UETik/app/src/main/res/layout/album_item.xml" value="0.1597222222222222" />
+        <entry key="..\:/Android/UETik/app/src/main/res/layout/fragment_albums.xml" value="0.1597222222222222" />
         <entry key="..\:/Android/UETik/app/src/main/res/layout/fragment_dashboard.xml" value="0.2" />
         <entry key="..\:/Android/UETik/app/src/main/res/layout/fragment_home.xml" value="0.16666666666666666" />
         <entry key="..\:/Android/UETik/app/src/main/res/layout/fragment_notifications.xml" value="0.2" />
@@ -30,6 +43,8 @@
         <entry key="..\:/Android/UETik/app/src/main/res/layout/list_item.xml" value="0.22" />
         <entry key="..\:/Android/UETik/app/src/main/res/layout/toolbar.xml" value="0.16666666666666666" />
         <entry key="..\:/Android/UETik/app/src/main/res/menu/bottom_nav_menu.xml" value="0.3333333333333333" />
+        <entry key="..\:/Android/UETik/app/src/main/res/menu/song_menu.xml" value="0.1597222222222222" />
+        <entry key="..\:/Android/UETik/app/src/main/res/menu/songmenu.xml" value="0.1597222222222222" />
         <entry key="..\:/Android/UETik/app/src/main/res/mipmap-anydpi-v26/ic_albumart.xml" value="0.1" />
         <entry key="..\:/Android/UETik/app/src/main/res/mipmap-anydpi-v26/ic_albumart_round.xml" value="0.1" />
         <entry key="..\:/Android/UETik/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.21614583333333334" />

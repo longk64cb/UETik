@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/Theme.UETik"
-    >
+    android:background="@color/primary_3">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
@@ -17,38 +17,9 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:menu="@menu/bottom_nav_menu"
-        android:layout_gravity="bottom"/>
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:fitsSystemWindows="true"
-        android:theme="@style/Theme.UETik">
-
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            app:title="Home"
-            android:id="@+id/collapsing_toolbar"
-            android:elevation="0dp">
-
-            <androidx.appcompat.widget.Toolbar
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:id="@+id/toolbar"
-                app:layout_collapseMode="pin"
-                android:elevation="0dp"/>
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+        android:layout_gravity="bottom"
+        app:itemBackground="@color/primary_1"
+        app:itemRippleColor="@color/primary_1"/>
 
         <fragment
             android:id="@+id/nav_host_fragment_activity_main"
@@ -64,7 +35,6 @@
             app:layout_constraintVertical_bias="0.0"
             app:navGraph="@navigation/mobile_navigation"
             android:layout_marginBottom="?attr/actionBarSize"/>
-    </androidx.core.widget.NestedScrollView>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

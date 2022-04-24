@@ -1,16 +1,16 @@
-package com.example.uetik.ui.notifications;
+package com.example.uetik.ui.albums;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class NotificationsViewModel extends ViewModel {
+public class AlbumsViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public NotificationsViewModel() {
+    public AlbumsViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is notifications fragment");
+        mText.setValue("This is albums fragment");
     }
 
     public LiveData<String> getText() {

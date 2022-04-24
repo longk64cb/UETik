@@ -12,14 +12,8 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_search"
-        android:name="com.example.uetik.ui.dashboard.DashboardFragment"
-        android:label="@string/title_search"
-        tools:layout="@layout/fragment_dashboard" />
-
-    <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.uetik.ui.notifications.NotificationsFragment"
+        android:id="@+id/navigation_albums"
+        android:name="com.example.uetik.ui.albums.AlbumsFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_albums" />
 </navigation>

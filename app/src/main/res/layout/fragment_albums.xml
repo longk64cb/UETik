@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment"
+    tools:context=".ui.albums.AlbumsFragment"
     android:theme="@style/Theme.UETik">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            app:title="Home"
+            app:title="Albums"
             android:id="@+id/collapsing_toolbar"
             android:elevation="0dp"
             android:theme="@style/CustomToolbarTheme">
@@ -40,8 +40,8 @@
         android:fillViewport="true"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <ListView
-            android:id="@+id/listViewSong"
+        <GridView
+            android:id="@+id/gridViewAlbums"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@android:color/transparent"
@@ -49,7 +49,11 @@
             android:nestedScrollingEnabled="true"
             android:padding="8dp"
             android:scrollbars="vertical"
-            android:visibility="visible"></ListView>
+            android:visibility="visible"
+            android:numColumns="2"
+            android:columnWidth="185dp"
+            android:stretchMode="spacingWidth"
+            android:verticalSpacing="10dp"/>
     </androidx.core.widget.NestedScrollView>
 
 

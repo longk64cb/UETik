@@ -9,38 +9,73 @@ import java.io.File;
 import java.io.Serializable;
 
 public class Song implements Parcelable {
-    public int id;
-    public String artist;
-    public String title;
-    public Uri albumArt;
-    public String songPath;
-    public String duration;
+    private String artist;
+    private String title;
+    private Uri albumArt;
+    private String songPath;
+    private String duration;
+    private String id;
+    private String albumName;
 
-    public Song (String title, String artist, Uri albumArt, String songPath, String duration) {
+    public Song (String title, String artist, Uri albumArt, String songPath, String duration, String id, String albumName) {
         this.title = title;
         this.artist = artist;
         this.albumArt = albumArt;
         this.songPath = songPath;
         this.duration = duration;
+        this.id = id;
+        this.albumName = albumName;
+    }
+
+    public Uri getAlbumArt() {
+        return albumArt;
+    }
+
+    public String getAlbumName() {
+        return albumName;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getSongPath() {
+        return songPath;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     protected Song(Parcel in) {
-        id = in.readInt();
+//        id = in.readInt();
         artist = in.readString();
         title = in.readString();
         albumArt = in.readParcelable(Uri.class.getClassLoader());
         songPath = in.readString();
         duration = in.readString();
+        id = in.readString();
+        albumName = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+//        dest.writeInt(id);
         dest.writeString(artist);
         dest.writeString(title);
         dest.writeParcelable(albumArt, flags);
         dest.writeString(songPath);
         dest.writeString(duration);
+        dest.writeString(id);
+        dest.writeString(albumName);
     }
 
     @Override
