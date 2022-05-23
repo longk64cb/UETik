@@ -1,2 +1,7 @@
-package com.example.uetik;public class ActionPlaying {
+package com.example.uetik;
+
+public interface ActionPlaying {
+    public void playPauseBtnClicked();
+    public void nextBtnClicked();
+    public void prevBtnClicked();
 }

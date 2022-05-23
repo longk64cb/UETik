@@ -1,6 +1,7 @@
 package com.example.uetik.models;
 
 import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -11,25 +12,25 @@ import java.io.Serializable;
 public class Song implements Parcelable {
     private String artist;
     private String title;
-    private Uri albumArt;
+//    private String albumArt;
     private String songPath;
     private String duration;
     private String id;
     private String albumName;
 
-    public Song (String title, String artist, Uri albumArt, String songPath, String duration, String id, String albumName) {
+    public Song (String title, String artist, String albumArt, String songPath, String duration, String id, String albumName) {
         this.title = title;
         this.artist = artist;
-        this.albumArt = albumArt;
+//        this.albumArt = albumArt;
         this.songPath = songPath;
         this.duration = duration;
         this.id = id;
         this.albumName = albumName;
     }
 
-    public Uri getAlbumArt() {
-        return albumArt;
-    }
+//    public String getAlbumArt() {
+//        return albumArt;
+//    }
 
     public String getAlbumName() {
         return albumName;
@@ -59,7 +60,7 @@ public class Song implements Parcelable {
 //        id = in.readInt();
         artist = in.readString();
         title = in.readString();
-        albumArt = in.readParcelable(Uri.class.getClassLoader());
+//        albumArt = in.readString();
         songPath = in.readString();
         duration = in.readString();
         id = in.readString();
@@ -71,7 +72,7 @@ public class Song implements Parcelable {
 //        dest.writeInt(id);
         dest.writeString(artist);
         dest.writeString(title);
-        dest.writeParcelable(albumArt, flags);
+//        dest.writeString(albumArt);
         dest.writeString(songPath);
         dest.writeString(duration);
         dest.writeString(id);
@@ -94,5 +95,7 @@ public class Song implements Parcelable {
             return new Song[size];
         }
     };
+
+
 }
 

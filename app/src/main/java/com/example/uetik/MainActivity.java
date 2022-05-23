@@ -1,13 +1,21 @@
 package com.example.uetik;
 
+import static com.example.uetik.MusicService.ALBUM_ART;
+import static com.example.uetik.MusicService.MUSIC_LAST_PLAYED;
+import static com.example.uetik.MusicService.SONG_TITLE;
+
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,9 +23,11 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,8 +41,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -40,6 +53,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.uetik.databinding.ActivityMainBinding;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -50,6 +65,7 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import java.io.File;
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -58,6 +74,23 @@ public class MainActivity extends AppCompatActivity {
 
     public static ArrayList<Song> songList = new ArrayList<>();
     public static ArrayList<Album> albumList = new ArrayList<>();
+    public static MusicService musicService;
+
+    public static final String MUSIC_LAST_PLAYED = "LAST_PLAYED";
+    public static final String MUSIC_FILE = "STORED_MUSIC";
+    public static final String SONG_TITLE = "SONG_TITLE";
+    public static final String ARTIST_NAME = "ARTIST_NAME";
+    public static final String ALBUM_ART = "ALBUM_ART";
+    public static final String SONG_LIST = "SONG_LIST";
+    public static final String POSITION = "POSITION";
+
+    public static boolean SHOW_MINI_PLAYER = false;
+    public static String PATH_TO_FRAG = null;
+    public static String TITLE_TO_FRAG = null;
+    public static String ARTIST_TO_FRAG = null;
+    public static String ALBUM_TO_FRAG = null;
+    public static ArrayList<Song> LIST_TO_FRAG = null;
+    public static int POSITION_TO_FRAG = -1;
 
     private ActivityMainBinding binding;
 
@@ -76,6 +109,9 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
+        setSupportActionBar(toolbar);
+
         runtimePermission();
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -84,11 +120,17 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_search, R.id.navigation_albums)
+                R.id.navigation_home, R.id.navigation_albums)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search, menu);
+        return true;
     }
 
     public void runtimePermission() {
@@ -215,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
                 String thisId = trackCursor.getString(id);
                 String thisAlbum = trackCursor.getString(albumColumn);
 //                Log.v("Test", thisDuration);
-                songList.add(new Song(thisTitle, thisArtist, thisArt, thisFile.getPath(), thisDuration, thisId, thisAlbum));
+                songList.add(new Song(thisTitle, thisArtist, thisArt.getPath(), thisFile.getPath(), thisDuration, thisId, thisAlbum));
             }
             while (trackCursor.moveToNext());
         }
@@ -234,9 +276,53 @@ public class MainActivity extends AppCompatActivity {
             albums.get(albumName).add(song);
         }
         albums.forEach((name, songs) -> {
-            Album album = new Album(name, songs.get(0).getAlbumArt(), songs);
+//            Bitmap picture;
+//            byte[] art = getAlbumArtFromUri(songs.get(0).getSongPath());
+//            if (art != null) {
+//                picture = BitmapFactory.decodeByteArray(art, 0, art.length);
+//            } else {
+//                picture = BitmapFactory.decodeResource(getResources(), R.drawable.album_art );
+//            }
+            Album album = new Album(name, songs.get(0).getSongPath(), songs);
             albumList.add(album);
         });
     }
 
+    public static byte[] getAlbumArtFromUri(String uri) {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(uri);
+        byte[] art = retriever.getEmbeddedPicture();
+        return art;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences preferences = getSharedPreferences(MUSIC_LAST_PLAYED, MODE_PRIVATE);
+        String path = preferences.getString(MUSIC_FILE, null);
+        String artist = preferences.getString(ARTIST_NAME, null);
+        String songTitle = preferences.getString(SONG_TITLE, null);
+        String albumArt = preferences.getString(ALBUM_ART, null);
+        String songList = preferences.getString(SONG_LIST, null);
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<Song>>() {}.getType();
+        int position = preferences.getInt(POSITION, -1);
+        if (path != null) {
+            SHOW_MINI_PLAYER = true;
+            PATH_TO_FRAG = path;
+            ARTIST_TO_FRAG = artist;
+            TITLE_TO_FRAG = songTitle;
+            ALBUM_TO_FRAG = albumArt;
+            LIST_TO_FRAG = gson.fromJson(songList, type);
+            POSITION_TO_FRAG = position;
+        } else {
+            SHOW_MINI_PLAYER = false;
+            PATH_TO_FRAG = null;
+            ARTIST_TO_FRAG = null;
+            TITLE_TO_FRAG = null;
+            ALBUM_TO_FRAG = null;
+            LIST_TO_FRAG = null;
+            POSITION_TO_FRAG = -1;
+        }
+    }
 }

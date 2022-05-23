@@ -8,7 +8,7 @@
     android:layout_marginStart="8dp"
     app:cardElevation="0dp"
     android:theme="@style/Theme.UETik"
-    app:cardBackgroundColor="@color/primary_4">
+    app:cardBackgroundColor="@color/primary_3">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,8 +22,7 @@
             android:layout_height="60dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="4dp"
-            android:background="@drawable/albumart">
+            android:layout_margin="4dp">
 
         </ImageView>
 
@@ -35,7 +34,7 @@
             android:layout_alignParentEnd="false"
             android:layout_alignParentBottom="false"
             android:layout_marginStart="5dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="30dp"
             android:layout_toEndOf="@+id/imgSong"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"

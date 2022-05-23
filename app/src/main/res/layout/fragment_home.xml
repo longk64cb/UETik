@@ -8,6 +8,7 @@
     android:theme="@style/Theme.UETik">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:fitsSystemWindows="true"
@@ -23,12 +24,22 @@
             android:elevation="0dp"
             android:theme="@style/CustomToolbarTheme">
 
+<!--            <ImageView-->
+<!--                android:layout_width="40dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:layout_marginEnd="10dp"-->
+<!--                android:src="@drawable/ic_baseline_search_24"-->
+<!--                android:layout_marginTop="70dp"-->
+<!--                android:layout_gravity="end"/>-->
+
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:id="@+id/toolbar"
+                android:id="@+id/home_toolbar"
                 app:layout_collapseMode="pin"
-                android:elevation="0dp"/>
+                android:elevation="0dp"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark">
+            </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -38,12 +49,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
+        android:layout_marginBottom="120dp"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
-
         <ListView
             android:id="@+id/listViewSong"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:divider="@android:color/transparent"
             android:dividerHeight="10.0sp"
             android:nestedScrollingEnabled="true"

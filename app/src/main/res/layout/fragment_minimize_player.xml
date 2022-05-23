@@ -2,13 +2,71 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MinimizePlayer">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.MinimizePlayer">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:id="@+id/minimize_player_card"
+        android:background="@color/primary_1_dark"
+        android:padding="5dp">
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/album_art"
+            android:id="@+id/minimize_player_album_art"
+            android:scaleType="centerCrop"/>
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/skip_next_minimize"
+            android:src="@drawable/next"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/play"
+            android:layout_toStartOf="@id/skip_next_minimize"
+            android:layout_marginEnd="10dp"
+            app:fabSize="mini"
+            android:scaleType="centerCrop"
+            android:layout_centerVertical="true"
+            android:id="@+id/play_btn_minimize"
+            android:backgroundTint="@color/primary_1_dark"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/title_minimize"
+            android:text="Song title"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:textColor="@color/white"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="15dp"
+            android:layout_toEndOf="@id/minimize_player_album_art"
+            android:textSize="18sp"
+            android:layout_toStartOf="@id/play_btn_minimize"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/artist_minimize"
+            android:text="Artist name"
+            android:textColor="@color/white"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="15dp"
+            android:layout_toEndOf="@id/minimize_player_album_art"
+            android:layout_below="@id/title_minimize"
+            android:textSize="16sp"
+            android:maxLines="1"
+            android:layout_toStartOf="@id/play_btn_minimize"/>
+    </RelativeLayout>
 
 </FrameLayout>

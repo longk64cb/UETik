@@ -1,17 +1,18 @@
 package com.example.uetik;
 
+import static com.example.uetik.MainActivity.getAlbumArtFromUri;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.uetik.models.Album;
-import com.example.uetik.models.Song;
 import com.example.uetik.ui.albums.AlbumsFragment;
 
 import java.util.ArrayList;
@@ -47,12 +48,14 @@ public class AlbumAdapter extends BaseAdapter {
         TextView albumName = myView.findViewById(R.id.album_name);
         ImageView albumArt = myView.findViewById(R.id.album_image);
         albumName.setText(albumList.get(i).getName());
-        if (albumList.get(i).getAlbumArt() != Uri.EMPTY) {
-            albumArt.setImageURI(albumList.get(i).getAlbumArt());
+        byte[] byteArray = getAlbumArtFromUri(albumList.get(i).getAlbumArt());
+        if (byteArray != null) {
+            Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            albumArt.setImageBitmap(bmp);
         } else {
-            albumArt.setImageResource(R.drawable.albumart);
-            Log.v("Test", "bruh");
+            albumArt.setImageResource(R.drawable.ic_baseline_music_note_24);
         }
+//        albumArt.setImageBitmap(albumList.get(i).getAlbumArt());
         return myView;
     }
 }

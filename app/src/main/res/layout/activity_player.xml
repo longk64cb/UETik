@@ -39,7 +39,7 @@
                 android:id="@+id/alterAlbumArt"
                 android:layout_width="250dp"
                 android:layout_height="250dp"
-                android:src="@drawable/albumart"
+                android:src="@drawable/album_art"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +51,7 @@
                 android:id="@+id/albumArtPlayer"
                 android:layout_width="250dp"
                 android:layout_height="250dp"
-                android:src="@drawable/albumart"
+                android:src="@drawable/album_art"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -71,8 +71,13 @@
                 android:id="@+id/txtPlayingSongName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
                 android:text="Song name"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="40dp">
@@ -178,9 +183,9 @@
                 android:id="@+id/playSong"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
+                android:layout_centerInParent="true"
                 android:layout_gravity="center"
-                android:background="@drawable/pause"
-                android:layout_centerInParent="true">
+                android:background="@drawable/pause">
 
             </Button>
 

@@ -15,6 +15,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,6 +26,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -42,8 +47,9 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Locale;
 
-public class HomeFragment extends Fragment implements Serializable{
+public class HomeFragment extends Fragment implements Serializable, SearchView.OnQueryTextListener {
 
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
@@ -61,6 +67,19 @@ public class HomeFragment extends Fragment implements Serializable{
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        setHasOptionsMenu(true);
+        Toolbar toolbar = root.findViewById(R.id.home_toolbar);
+        toolbar.inflateMenu(R.menu.search);
+        toolbar.setOnCreateContextMenuListener(this);
+
+        SearchView searchView = root.findViewById(R.id.search_option);
+//        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setOnQueryTextListener(this);
+
+//        MenuItem menuItem = menu.findItem(R.id.search_option);
+//        SearchView searchView = (SearchView) menuItem.getActionView();
+//        searchView.setOnQueryTextListener(this);
+
         listView = (ListView) root.findViewById(R.id.listViewSong);
         if (listView != null) {
             Log.v("ListView", "Found listView home");
@@ -74,18 +93,13 @@ public class HomeFragment extends Fragment implements Serializable{
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 TextView songNameTxt = (TextView) view.findViewById(R.id.txtSongName);
                 TextView artistNameTxt = (TextView) view.findViewById(R.id.txtArtistName);
-                ImageView albumImgView = (ImageView) view.findViewById(R.id.imgSong);
                 String songName = (String) songNameTxt.getText();
                 String artistName = (String) artistNameTxt.getText();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("songList", (Serializable) songList);
-                Drawable albumArt = (Drawable) albumImgView.getDrawable();
-                Log.v("Test", songList.get(i).getAlbumArt().getPath());
                 startActivity(new Intent(getActivity().getApplicationContext(), PlayerActivity.class)
                         .putExtra("songName", songName)
                         .putExtra("songList", bundle)
-                        .putExtra("artistName", artistName)
-                        .putExtra("albumArt", songList.get(i).getAlbumArt().toString())
                         .putExtra("pos", i));
             }
         });
@@ -98,12 +112,6 @@ public class HomeFragment extends Fragment implements Serializable{
 //            }
 //        });
         return root;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 
     public void deleteSong(int position, View view) {
@@ -145,4 +153,38 @@ public class HomeFragment extends Fragment implements Serializable{
         return !file.exists();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.search, menu);
+        MenuItem menuItem = menu.findItem(R.id.search_option);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setOnQueryTextListener(this);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        String userInput = newText.toLowerCase();
+        ArrayList<Song> searchFiles = new ArrayList<>();
+        for (Song song : songList)
+        {
+            if(song.getTitle().toLowerCase().contains(userInput))
+            {
+                searchFiles.add(song);
+            }
+        }
+        songAdapter.updateList(searchFiles);
+        return true;
+    }
 }

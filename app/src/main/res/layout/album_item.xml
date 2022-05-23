@@ -10,13 +10,13 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primary_4"
+        android:background="@color/primary_3"
         android:id="@+id/relative_layout">
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="185dp"
             android:id="@+id/album_image"
-            android:src="@drawable/albumart"/>
+            android:src="@drawable/album_art"/>
         <TextView
             android:layout_width="140dp"
             android:layout_height="wrap_content"

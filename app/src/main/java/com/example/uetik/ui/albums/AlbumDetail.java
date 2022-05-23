@@ -1,10 +1,14 @@
 package com.example.uetik.ui.albums;
 
 import static com.example.uetik.MainActivity.albumList;
+import static com.example.uetik.MainActivity.getAlbumArtFromUri;
 import static com.example.uetik.MainActivity.songList;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,7 +53,14 @@ public class AlbumDetail extends AppCompatActivity {
         Bundle bundle = intent.getBundleExtra("albumList");
         position = intent.getIntExtra("pos", 0);
         album = albumList.get(position);
-        albumArt.setImageURI(album.getAlbumArt());
+        byte[] byteArray = getAlbumArtFromUri(album.getAlbumArt());
+        if (byteArray != null) {
+            Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            albumArt.setImageBitmap(bmp);
+        } else {
+            albumArt.setImageResource(R.drawable.ic_baseline_music_note_24);
+        }
+//        albumArt.setImageBitmap(getAlbumArtFromUri(album.getAlbumArt()));
         CollapsingToolbarLayout layout = findViewById(R.id.collapsing_toolbar_album_name);
         layout.setTitle(album.getName());
 
@@ -67,12 +78,11 @@ public class AlbumDetail extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("songList", (Serializable) album.getSongs());
                 Drawable albumArt = (Drawable) albumImgView.getDrawable();
-                Log.v("Test", album.getSongs().get(i).getAlbumArt().getPath());
                 startActivity(new Intent(getApplicationContext(), PlayerActivity.class)
                         .putExtra("songName", songName)
                         .putExtra("songList", bundle)
                         .putExtra("artistName", artistName)
-                        .putExtra("albumArt", album.getSongs().get(i).getAlbumArt().toString())
+//                        .putExtra("albumArt", album.getSongs().get(i).getAlbumArt().toString())
                         .putExtra("pos", i));
             }
         });
@@ -109,15 +119,24 @@ public class AlbumDetail extends AppCompatActivity {
             ImageView albumArt = myView.findViewById(R.id.imgSong);
             ImageView btnMenu = myView.findViewById(R.id.songMenu);
             textSong.setText(songList.get(i).getTitle());
+            textSong.setSelected(true);
             textArtist.setText(songList.get(i).getArtist());
-            if (songList.get(i).getAlbumArt() != Uri.EMPTY) {
-                albumArt.setImageURI(songList.get(i).getAlbumArt());
+            byte[] byteArray = getAlbumArtFromUri(songList.get(i).getSongPath());
+            if (byteArray != null) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                albumArt.setImageBitmap(bmp);
             } else {
                 albumArt.setImageResource(R.drawable.ic_baseline_music_note_24);
-                Log.v("Test", "bruh");
             }
             return myView;
         }
+
+         private byte[] getAlbumArtFromUri(String uri) {
+             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+             retriever.setDataSource(uri);
+             byte[] art = retriever.getEmbeddedPicture();
+             return art;
+         }
     }
 
 }

@@ -1,5 +1,8 @@
 package com.example.uetik;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
@@ -49,12 +52,14 @@ public class SongAdapter extends BaseAdapter {
         ImageView albumArt = myView.findViewById(R.id.imgSong);
         ImageView btnMenu = myView.findViewById(R.id.songMenu);
         textSong.setText(songList.get(i).getTitle());
+        textSong.setSelected(true);
         textArtist.setText(songList.get(i).getArtist());
-        if (songList.get(i).getAlbumArt() != Uri.EMPTY) {
-            albumArt.setImageURI(songList.get(i).getAlbumArt());
+        byte[] byteArray = getAlbumArtFromUri(songList.get(i).getSongPath());
+        if (byteArray != null) {
+            Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            albumArt.setImageBitmap(bmp);
         } else {
             albumArt.setImageResource(R.drawable.ic_baseline_music_note_24);
-            Log.v("Test", "bruh");
         }
         btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,5 +79,19 @@ public class SongAdapter extends BaseAdapter {
             }
         });
         return myView;
+    }
+
+    private byte[] getAlbumArtFromUri(String uri) {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(uri);
+        byte[] art = retriever.getEmbeddedPicture();
+        return art;
+    }
+
+    public void updateList(ArrayList<Song> songs)
+    {
+        songList = new ArrayList<>();
+        songList.addAll(songs);
+        notifyDataSetChanged();
     }
 }
