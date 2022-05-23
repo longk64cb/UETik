@@ -111,12 +111,13 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
         mediaSessionCompat = new MediaSessionCompat(getBaseContext(), "My Audio");
 
         showNotification(R.drawable.pause);
-
-        if (musicService.getMediaPlayer() != null && musicService.isPlaying()) {
-            musicService.stop();
-            musicService.release();
+        if (musicService != null) {
+            if (musicService.getMediaPlayer() != null && musicService.isPlaying()) {
+                musicService.stop();
+                musicService.release();
+            }
         }
-
+        
         Intent intent = new Intent(this, MusicService.class);
         Bundle bundleService = new Bundle();
         bundleService.putSerializable("songList", (Serializable) songList);

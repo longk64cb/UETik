@@ -204,7 +204,11 @@ public class MinimizePlayer extends Fragment implements ServiceConnection {
     public void onPause() {
         super.onPause();
         if (getContext() != null) {
-            getContext().unbindService(this);
+            try {
+                getContext().unbindService(this);
+            } catch (IllegalArgumentException e) {
+
+            }
         }
     }
 
