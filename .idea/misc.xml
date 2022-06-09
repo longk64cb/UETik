@@ -8,6 +8,7 @@
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/favourite.xml" value="0.17407407407407408" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/gradient_bg.xml" value="0.17407407407407408" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/ic_albumart_background.xml" value="0.17407407407407408" />
+        <entry key="..\:/Android/UETik/app/src/main/res/drawable/ic_albumart_foreground.xml" value="0.18949771689497716" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/ic_baseline_music_note_24.xml" value="0.13651315789473684" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/ic_baseline_pause_24.xml" value="0.16944444444444445" />
         <entry key="..\:/Android/UETik/app/src/main/res/drawable/ic_baseline_pause_circle_outline_24.xml" value="0.17407407407407408" />
@@ -43,6 +44,7 @@
         <entry key="..\:/Android/UETik/app/src/main/res/layout/fragment_home.xml" value="0.16666666666666666" />
         <entry key="..\:/Android/UETik/app/src/main/res/layout/fragment_minimize_player.xml" value="0.22" />
         <entry key="..\:/Android/UETik/app/src/main/res/layout/fragment_notifications.xml" value="0.2" />
+        <entry key="..\:/Android/UETik/app/src/main/res/layout/fragment_online.xml" value="0.17777777777777778" />
         <entry key="..\:/Android/UETik/app/src/main/res/layout/list.xml" value="0.2" />
         <entry key="..\:/Android/UETik/app/src/main/res/layout/list_item.xml" value="0.22" />
         <entry key="..\:/Android/UETik/app/src/main/res/layout/toolbar.xml" value="0.16666666666666666" />

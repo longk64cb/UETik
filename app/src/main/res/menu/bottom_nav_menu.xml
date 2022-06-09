@@ -11,4 +11,9 @@
         android:icon="@android:drawable/ic_menu_sort_by_size"
         android:title="@string/title_notifications" />
 
+    <item
+        android:id="@+id/navigation_online"
+        android:icon="@drawable/ic_albumart_foreground"
+        android:title="@string/title_online" />
+
 </menu>

@@ -117,7 +117,7 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
                 musicService.release();
             }
         }
-        
+
         Intent intent = new Intent(this, MusicService.class);
         Bundle bundleService = new Bundle();
         bundleService.putSerializable("songList", (Serializable) songList);
