@@ -51,7 +51,7 @@
         android:fillViewport="true"
         android:layout_marginBottom="120dp"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
-        <ListView
+        <com.example.uetik.ui.ExpandableHeightListView
             android:id="@+id/listViewSong"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
             android:nestedScrollingEnabled="true"
             android:padding="8dp"
             android:scrollbars="vertical"
-            android:visibility="visible"></ListView>
+            android:visibility="visible"></com.example.uetik.ui.ExpandableHeightListView>
     </androidx.core.widget.NestedScrollView>
 
 

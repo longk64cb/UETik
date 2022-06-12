@@ -1,14 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.online.OnlineFragment">
+    tools:context=".ui.online.OnlineFragment"
+    android:theme="@style/Theme.UETik">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="120dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/Theme.UETik">
 
-</FrameLayout>
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
+            app:title="Online"
+            android:id="@+id/collapsing_toolbar"
+            android:elevation="0dp"
+            android:theme="@style/CustomToolbarTheme">
+
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:id="@+id/home_toolbar"
+                app:layout_collapseMode="pin"
+                android:elevation="0dp"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark">
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="126dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="30dp"
+                android:text="Popular Songs"/>
+            <com.example.uetik.ui.ExpandableHeightListView
+                android:id="@+id/onlineListViewSong"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="10.0sp"
+                android:nestedScrollingEnabled="true"
+                android:padding="8dp"
+                android:scrollbars="vertical"
+                android:visibility="visible" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="30dp"
+                android:text="Genres"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/genreList"/>
+<!--            <GridView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="190dp"-->
+<!--                android:divider="@android:color/transparent"-->
+<!--                android:dividerHeight="10.0sp"-->
+<!--                android:nestedScrollingEnabled="true"-->
+<!--                android:padding="8dp"-->
+<!--                android:scrollbars="horizontal"-->
+<!--                android:visibility="visible"-->
+<!--                android:numColumns="3"-->
+<!--                android:columnWidth="185dp"-->
+<!--                android:stretchMode="spacingWidth"-->
+<!--                android:verticalSpacing="10dp"-->
+<!--                android:id="@+id/genreList"/>-->
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

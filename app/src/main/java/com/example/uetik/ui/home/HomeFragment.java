@@ -2,16 +2,12 @@ package com.example.uetik.ui.home;
 
 import static com.example.uetik.MainActivity.songList;
 
-import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,8 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,29 +26,23 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.uetik.R;
-import com.example.uetik.SongAdapter;
+import com.example.uetik.adapter.SongAdapter;
 import com.example.uetik.databinding.FragmentHomeBinding;
 import com.example.uetik.models.Song;
+import com.example.uetik.ui.ExpandableHeightListView;
 import com.example.uetik.ui.PlayerActivity;
 import com.google.android.material.snackbar.Snackbar;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class HomeFragment extends Fragment implements Serializable, SearchView.OnQueryTextListener {
 
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
 
-    ListView listView;
+    ExpandableHeightListView listView;
     String[] items;
     SongAdapter songAdapter;
 //    public ArrayList<Song> songList = new ArrayList<>();
@@ -80,13 +68,17 @@ public class HomeFragment extends Fragment implements Serializable, SearchView.O
 //        SearchView searchView = (SearchView) menuItem.getActionView();
 //        searchView.setOnQueryTextListener(this);
 
-        listView = (ListView) root.findViewById(R.id.listViewSong);
+        listView = (ExpandableHeightListView) root.findViewById(R.id.listViewSong);
+
         if (listView != null) {
             Log.v("ListView", "Found listView home");
         }
 
         songAdapter = new SongAdapter(this, songList);
         listView.setAdapter(songAdapter);
+        listView.setScrollContainer(false);
+        listView.setExpanded(true);
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

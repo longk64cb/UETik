@@ -1,4 +1,4 @@
-package com.example.uetik;
+package com.example.uetik.adapter;
 
 import static com.example.uetik.MainActivity.getAlbumArtFromUri;
 
@@ -12,17 +12,18 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.uetik.R;
 import com.example.uetik.models.Album;
 import com.example.uetik.ui.albums.AlbumsFragment;
 
 import java.util.ArrayList;
 
-public class AlbumAdapter extends BaseAdapter {
+public class AlbumListAdapter extends BaseAdapter {
 
     private AlbumsFragment albumsFragment;
     private ArrayList<Album> albumList;
 
-    public AlbumAdapter(AlbumsFragment albumsFragment, ArrayList<Album> albumList) {
+    public AlbumListAdapter(AlbumsFragment albumsFragment, ArrayList<Album> albumList) {
         this.albumsFragment = albumsFragment;
         this.albumList = albumList;
     }

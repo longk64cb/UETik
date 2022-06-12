@@ -2,34 +2,27 @@ package com.example.uetik.ui.albums;
 
 import static com.example.uetik.MainActivity.albumList;
 import static com.example.uetik.MainActivity.getAlbumArtFromUri;
-import static com.example.uetik.MainActivity.songList;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.uetik.R;
-import com.example.uetik.SongAdapter;
 import com.example.uetik.models.Album;
 import com.example.uetik.models.Song;
 import com.example.uetik.ui.PlayerActivity;
-import com.example.uetik.ui.home.HomeFragment;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.io.Serializable;

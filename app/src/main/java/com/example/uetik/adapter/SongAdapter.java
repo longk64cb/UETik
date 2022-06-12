@@ -1,4 +1,4 @@
-package com.example.uetik;
+package com.example.uetik.adapter;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +13,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.uetik.R;
 import com.example.uetik.models.Song;
 import com.example.uetik.ui.home.HomeFragment;
 
