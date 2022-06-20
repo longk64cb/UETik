@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="30dp"
                 android:text="Popular Songs"/>
-            <com.example.uetik.ui.ExpandableHeightListView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/onlineListViewSong"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

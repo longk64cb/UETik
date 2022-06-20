@@ -1,10 +1,12 @@
 package com.example.uetik;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -13,32 +15,31 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.uetik.models.OnlineSong;
 import com.example.uetik.models.Song;
 import com.example.uetik.ui.home.HomeFragment;
 import com.example.uetik.ui.online.OnlineFragment;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class OnlineSongAdapter extends BaseAdapter {
+
+public class OnlineSongAdapter extends RecyclerView.Adapter<OnlineSongAdapter.OnlineItemViewHolder> {
 
     private final OnlineFragment fragment;
-    private ArrayList<Song> songList;
+    private List<OnlineSong> onlineSongList;
+//    private Context context;
+
     private View adapterView;
 
-    public OnlineSongAdapter(OnlineFragment onlineFragment, ArrayList<Song> songList) {
-        this.fragment = onlineFragment;
-        this.songList = songList;
+    public OnlineSongAdapter(List<OnlineSong> onlineSongList, OnlineFragment fragment) {
+        this.onlineSongList = onlineSongList;
+        this.fragment = fragment;
     }
 
-    @Override
-    public int getCount() {
-        return songList.size();
-    }
-
-    @Override
-    public Object getItem(int i) {
-        return null;
-    }
 
     @Override
     public long getItemId(int i) {
@@ -46,53 +47,45 @@ public class OnlineSongAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        View myView = fragment.getLayoutInflater().inflate(R.layout.list_item, null);
-        TextView textSong = myView.findViewById(R.id.txtSongName);
-        TextView textArtist = myView.findViewById(R.id.txtArtistName);
-        ImageView albumArt = myView.findViewById(R.id.imgSong);
-        ImageView btnMenu = myView.findViewById(R.id.songMenu);
-        textSong.setText(songList.get(i).getTitle());
-        textSong.setSelected(true);
-        textArtist.setText(songList.get(i).getArtist());
-        byte[] byteArray = getAlbumArtFromUri(songList.get(i).getSongPath());
-        if (byteArray != null) {
-            Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-            albumArt.setImageBitmap(bmp);
-        } else {
-            albumArt.setImageResource(R.drawable.ic_baseline_music_note_24);
+    public int getItemCount() {
+        return 0;
+    }
+
+    @Override
+    public OnlineItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.online_list_item, parent, false);
+
+        return new OnlineItemViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(OnlineItemViewHolder holder, int position) {
+        OnlineSong os = onlineSongList.get(position);
+        Picasso.with(holder.ivAlbumArt.getContext())
+                .load(os.imgPath)
+                .into(holder.ivAlbumArt);
+        holder.tvSongName.setText(os.songName);
+        holder.tvArtistName.setText(String.valueOf(os.author));
+    }
+
+    public static class OnlineItemViewHolder extends RecyclerView.ViewHolder {
+        public TextView tvSongName;
+        public TextView tvArtistName;
+        public ImageView ivAlbumArt;
+
+        public OnlineItemViewHolder(View itemView) {
+            super(itemView);
+            tvSongName = (TextView) itemView.findViewById(R.id.txtSongName);
+            tvArtistName = itemView.findViewById(R.id.txtArtistName);
+            ivAlbumArt =  itemView.findViewById(R.id.imgSong);
         }
-        btnMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(fragment.getContext(), v);
-                popupMenu.getMenuInflater().inflate(R.menu.song_menu, popupMenu.getMenu());
-                popupMenu.show();
-                popupMenu.setOnMenuItemClickListener((item) -> {
-                    switch (item.getItemId()) {
-//                        case R.id.delete:
-//                            Toast.makeText(fragment.getContext(), "Delete Clicked", Toast.LENGTH_SHORT).show();
-//                            fragment.deleteSong(i, v);
-//                            break;
-                    }
-                    return true;
-                });
-            }
-        });
-        return myView;
     }
 
-    private byte[] getAlbumArtFromUri(String uri) {
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(uri);
-        byte[] art = retriever.getEmbeddedPicture();
-        return art;
-    }
 
-    public void updateList(ArrayList<Song> songs)
+    public void updateList(List<OnlineSong> songs)
     {
-        songList = new ArrayList<>();
-        songList.addAll(songs);
+        onlineSongList.addAll(songs);
         notifyDataSetChanged();
     }
 }

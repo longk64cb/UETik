@@ -60,5 +60,8 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.2.1"
     implementation 'com.github.ducna01598:JHorizontalListView:1.0.1'
     implementation 'org.lucasr.twowayview:twowayview:0.1.4'
+    implementation 'com.squareup.okhttp3:okhttp:3.4.1'
+    implementation 'com.squareup.moshi:moshi:1.2.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 
 }

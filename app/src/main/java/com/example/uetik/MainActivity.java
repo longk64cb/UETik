@@ -33,6 +33,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.uetik.models.Album;
+import com.example.uetik.models.OnlineSong;
 import com.example.uetik.models.Song;
 import com.example.uetik.ui.PlayerActivity;
 import com.example.uetik.ui.home.HomeFragment;
@@ -50,6 +51,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uetik.databinding.ActivityMainBinding;
 import com.google.android.material.snackbar.Snackbar;
@@ -69,10 +72,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     public static ArrayList<Song> songList = new ArrayList<>();
+    public static List<OnlineSong> onlineSongList;
     public static ArrayList<Album> albumList = new ArrayList<>();
     public static MusicService musicService;
 
@@ -125,6 +130,8 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+
     }
 
     @Override
