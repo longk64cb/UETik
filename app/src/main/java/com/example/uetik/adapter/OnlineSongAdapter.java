@@ -13,26 +13,28 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.uetik.models.OnlineSong;
 import com.example.uetik.models.Song;
 import com.example.uetik.ui.home.HomeFragment;
 import com.example.uetik.ui.online.OnlineFragment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class OnlineSongAdapter extends BaseAdapter {
 
     private final OnlineFragment fragment;
-    private ArrayList<Song> songList;
+    private List<OnlineSong> onlineSongList;
     private View adapterView;
 
-    public OnlineSongAdapter(OnlineFragment onlineFragment, ArrayList<Song> songList) {
-        this.fragment = onlineFragment;
-        this.songList = songList;
+    public OnlineSongAdapter(List<OnlineSong> onlineSongList, OnlineFragment fragment) {
+        this.fragment = fragment;
+        this.onlineSongList = onlineSongList;
     }
 
     @Override
     public int getCount() {
-        return songList.size();
+        return onlineSongList.size();
     }
 
     @Override
@@ -51,7 +53,7 @@ public class OnlineSongAdapter extends BaseAdapter {
         TextView textSong = myView.findViewById(R.id.txtSongName);
         TextView textArtist = myView.findViewById(R.id.txtArtistName);
         ImageView albumArt = myView.findViewById(R.id.imgSong);
-        ImageView btnMenu = myView.findViewById(R.id.songMenu);
+        ImageView btnMenu = myView.findViewById(R.id.songMenu);a
         textSong.setText(songList.get(i).getTitle());
         textSong.setSelected(true);
         textArtist.setText(songList.get(i).getArtist());
