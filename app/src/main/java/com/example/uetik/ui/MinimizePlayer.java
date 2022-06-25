@@ -6,17 +6,14 @@ import static com.example.uetik.ApplicationClass.ACTION_NEXT;
 import static com.example.uetik.ApplicationClass.ACTION_PLAY;
 import static com.example.uetik.ApplicationClass.ACTION_PREVIOUS;
 import static com.example.uetik.ApplicationClass.CHANNEL_ID_2;
-import static com.example.uetik.MainActivity.ALBUM_ART;
 import static com.example.uetik.MainActivity.ALBUM_TO_FRAG;
 import static com.example.uetik.MainActivity.ARTIST_TO_FRAG;
 import static com.example.uetik.MainActivity.LIST_TO_FRAG;
 import static com.example.uetik.MainActivity.PATH_TO_FRAG;
-import static com.example.uetik.MainActivity.POSITION;
 import static com.example.uetik.MainActivity.POSITION_TO_FRAG;
 import static com.example.uetik.MainActivity.SHOW_MINI_PLAYER;
 import static com.example.uetik.MainActivity.TITLE_TO_FRAG;
 import static com.example.uetik.MainActivity.musicService;
-import static com.example.uetik.MainActivity.songList;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -41,7 +38,6 @@ import androidx.fragment.app.Fragment;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.media.session.MediaSessionCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,15 +47,13 @@ import android.widget.TextView;
 import com.example.uetik.MusicService;
 import com.example.uetik.NotificationReceiver;
 import com.example.uetik.R;
-import com.example.uetik.models.Song;
+import com.example.uetik.models.OfflineSong;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
 import java.io.Serializable;
 import java.lang.reflect.Type;
-import java.net.URI;
 import java.util.ArrayList;
 
 public class MinimizePlayer extends Fragment implements ServiceConnection {
@@ -114,14 +108,14 @@ public class MinimizePlayer extends Fragment implements ServiceConnection {
                     if (getActivity() != null) {
                         SharedPreferences.Editor editor = getActivity().getSharedPreferences(MUSIC_LAST_PLAYED, MODE_PRIVATE)
                                 .edit();
-                        if (musicService.songs != null) {
+                        if (musicService.offlineSongs != null) {
                             Gson gson = new Gson();
-                            String json = gson.toJson(musicService.songs);
+                            String json = gson.toJson(musicService.offlineSongs);
                             editor.putString(SONG_LIST, json);
                         }
-                        editor.putString(MUSIC_FILE, musicService.songs.get(musicService.position).getSongPath());
-                        editor.putString(SONG_TITLE, musicService.songs.get(musicService.position).getTitle());
-                        editor.putString(ARTIST_NAME, musicService.songs.get(musicService.position).getArtist());
+                        editor.putString(MUSIC_FILE, musicService.offlineSongs.get(musicService.position).getSongPath());
+                        editor.putString(SONG_TITLE, musicService.offlineSongs.get(musicService.position).getTitle());
+                        editor.putString(ARTIST_NAME, musicService.offlineSongs.get(musicService.position).getArtist());
 //                        editor.putString(ALBUM_ART, musicService.songs.get(musicService.position).getAlbumArt());
                         editor.apply();
                         updateLastPlayed();
@@ -183,13 +177,13 @@ public class MinimizePlayer extends Fragment implements ServiceConnection {
         super.onResume();
         if (SHOW_MINI_PLAYER) {
             if (PATH_TO_FRAG != null) {
-                byte[] byteArray = getAlbumArtFromUri(PATH_TO_FRAG);
-                if (byteArray != null) {
-                    Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-                    albumArt.setImageBitmap(Bitmap.createScaledBitmap(bmp, 60, 60, false));
-                } else {
-                    albumArt.setImageResource(R.drawable.album_art);
-                }
+//                byte[] byteArray = getAlbumArtFromUri(PATH_TO_FRAG);
+//                if (byteArray != null) {
+//                    Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+//                    albumArt.setImageBitmap(Bitmap.createScaledBitmap(bmp, 60, 60, false));
+//                } else {
+//                    albumArt.setImageResource(R.drawable.album_art);
+//                }
                 songTitle.setText(TITLE_TO_FRAG);
                 artist.setText(ARTIST_TO_FRAG);
                 Intent intent = new Intent(getContext(), MusicService.class);
@@ -214,7 +208,7 @@ public class MinimizePlayer extends Fragment implements ServiceConnection {
 
     private byte[] getAlbumArtFromUri(String uri) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(uri);
+//        retriever.setDataSource(uri);
         byte[] art = retriever.getEmbeddedPicture();
         return art;
     }
@@ -255,7 +249,7 @@ public class MinimizePlayer extends Fragment implements ServiceConnection {
         String albumArtText = preferences.getString(ALBUM_ART, null);
         String songArrayList = preferences.getString(SONG_LIST, null);
         Gson getGson = new Gson();
-        Type type = new TypeToken<ArrayList<Song>>() {}.getType();
+        Type type = new TypeToken<ArrayList<OfflineSong>>() {}.getType();
         int position = preferences.getInt(POSITION, -1);
         if (path != null) {
             SHOW_MINI_PLAYER = true;

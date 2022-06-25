@@ -7,7 +7,6 @@ import static com.example.uetik.ApplicationClass.ACTION_PLAY;
 import static com.example.uetik.ApplicationClass.ACTION_PREVIOUS;
 import static com.example.uetik.ApplicationClass.CHANNEL_ID_2;
 import static com.example.uetik.MainActivity.musicService;
-import static com.example.uetik.MainActivity.songList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +23,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,9 +30,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.media.session.MediaSessionCompat;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -51,7 +46,7 @@ import com.example.uetik.NotificationReceiver;
 import com.example.uetik.PlayMode;
 import com.example.uetik.R;
 import com.example.uetik.databinding.ActivityPlayerBinding;
-import com.example.uetik.models.Song;
+import com.example.uetik.models.OfflineSong;
 import com.masoudss.lib.SeekBarOnProgressChanged;
 import com.masoudss.lib.WaveformSeekBar;
 
@@ -67,7 +62,7 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
 
     public static final String EXTRA_NAME = "songName";
     int position;
-    ArrayList<Song> songList;
+    ArrayList<OfflineSong> offlineSongList;
     Uri songUri;
 
     private ActivityPlayerBinding binding;
@@ -105,7 +100,7 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
 
         Intent i = getIntent();
         Bundle bundle = i.getBundleExtra("songList");
-        songList = (ArrayList) bundle.getSerializable("songList");
+        offlineSongList = (ArrayList) bundle.getSerializable("songList");
         position = i.getIntExtra("pos", 0);
 
         mediaSessionCompat = new MediaSessionCompat(getBaseContext(), "My Audio");
@@ -120,7 +115,7 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
 
         Intent intent = new Intent(this, MusicService.class);
         Bundle bundleService = new Bundle();
-        bundleService.putSerializable("songList", (Serializable) songList);
+        bundleService.putSerializable("songList", (Serializable) offlineSongList);
         intent.putExtra("servicePosition", position)
                 .putExtra("songList", bundle);
         startService(intent);
@@ -287,10 +282,10 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
         musicService.release();
         switch (playMode) {
             case SHUFFLE:
-                position = getRandom(songList.size() - 1);
+                position = getRandom(offlineSongList.size() - 1);
                 break;
             default:
-                position = ((position + 1) % songList.size());
+                position = ((position + 1) % offlineSongList.size());
                 break;
         }
         setPlayingSongView();
@@ -325,10 +320,10 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
         musicService.release();
         switch (playMode) {
             case SHUFFLE:
-                position = getRandom(songList.size() - 1);
+                position = getRandom(offlineSongList.size() - 1);
                 break;
             default:
-                position = ((position - 1) < 0 ? (songList.size() - 1) : (position - 1));
+                position = ((position - 1) < 0 ? (offlineSongList.size() - 1) : (position - 1));
                 break;
         }
         setPlayingSongView();
@@ -360,22 +355,22 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
     }
 
     private void setPlayingSongView() {
-        songUri = Uri.parse(songList.get(position).getSongPath());
+        songUri = Uri.parse(offlineSongList.get(position).getSongPath());
         if (musicService == null) {
             Log.v("Test", "No music service.");
         }
 //        musicService.createMediaPlayer(position);
-        txtSongName.setText(songList.get(position).getTitle());
-        txtArtistName.setText(songList.get(position).getArtist());
-        byte[] byteArray = getAlbumArtFromUri(songList.get(position).getSongPath());
+        txtSongName.setText(offlineSongList.get(position).getTitle());
+        txtArtistName.setText(offlineSongList.get(position).getArtist());
+        byte[] byteArray = getAlbumArtFromUri(offlineSongList.get(position).getSongPath());
         if (byteArray != null) {
             Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
             albumArt.setImageBitmap(bmp);
         } else {
             albumArt.setImageResource(R.drawable.ic_baseline_music_note_24);
-        }        int durationTotal = Integer.parseInt((String) songList.get(position).getDuration()) / 1000;
+        }        int durationTotal = Integer.parseInt((String) offlineSongList.get(position).getDuration()) / 1000;
         endSong.setText(formatTime(durationTotal));
-        waveformSeekBar.setSampleFrom(songList.get(position).getSongPath());
+        waveformSeekBar.setSampleFrom(offlineSongList.get(position).getSongPath());
     }
 
     public int getRandom(int i) {
@@ -470,7 +465,7 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
                 .setAction(ACTION_NEXT);
         PendingIntent nextPending = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         Bitmap picture;
-        byte[] art = getAlbumArtFromUri(songList.get(position).getSongPath());
+        byte[] art = getAlbumArtFromUri(offlineSongList.get(position).getSongPath());
         if (art != null) {
             picture = BitmapFactory.decodeByteArray(art, 0, art.length);
         } else {
@@ -479,8 +474,8 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID_2)
                 .setSmallIcon(playPauseBtn)
                 .setLargeIcon(picture)
-                .setContentTitle(songList.get(position).getTitle())
-                .setContentText(songList.get(position).getArtist())
+                .setContentTitle(offlineSongList.get(position).getTitle())
+                .setContentText(offlineSongList.get(position).getArtist())
                 .addAction(R.drawable.prev, "Previous", prevPending)
                 .addAction(playPauseBtn, "Pause", pausePending)
                 .addAction(R.drawable.next, "Next", nextPending)

@@ -1,43 +1,23 @@
 package com.example.uetik;
 
-import static com.example.uetik.MusicService.ALBUM_ART;
-import static com.example.uetik.MusicService.MUSIC_LAST_PLAYED;
-import static com.example.uetik.MusicService.SONG_TITLE;
-
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.uetik.models.Album;
 import com.example.uetik.models.OnlineSong;
-import com.example.uetik.models.Song;
+import com.example.uetik.models.OfflineSong;
 import com.example.uetik.models.Topic;
-import com.example.uetik.ui.PlayerActivity;
-import com.example.uetik.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.RequiresApi;
@@ -46,15 +26,12 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.uetik.databinding.ActivityMainBinding;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.karumi.dexter.Dexter;
@@ -65,21 +42,19 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.io.File;
-import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static ArrayList<Song> songList = new ArrayList<>();
+    public static ArrayList<OfflineSong> offlineSongList = new ArrayList<>();
     public static ArrayList<Album> albumList = new ArrayList<>();
     public static List<Topic> topicList;
     public static List<OnlineSong> onlineSongList;
     public static MusicService musicService;
+    public static OnlineMusicService onlineMusicService;
 
     public static final String MUSIC_LAST_PLAYED = "LAST_PLAYED";
     public static final String MUSIC_FILE = "STORED_MUSIC";
@@ -94,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     public static String TITLE_TO_FRAG = null;
     public static String ARTIST_TO_FRAG = null;
     public static String ALBUM_TO_FRAG = null;
-    public static ArrayList<Song> LIST_TO_FRAG = null;
+    public static ArrayList<OfflineSong> LIST_TO_FRAG = null;
     public static int POSITION_TO_FRAG = -1;
 
     private ActivityMainBinding binding;
@@ -262,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
                 String thisId = trackCursor.getString(id);
                 String thisAlbum = trackCursor.getString(albumColumn);
 //                Log.v("Test", thisDuration);
-                songList.add(new Song(thisTitle, thisArtist, thisArt.getPath(), thisFile.getPath(), thisDuration, thisId, thisAlbum));
+                offlineSongList.add(new OfflineSong(thisTitle, thisArtist, thisArt.getPath(), thisFile.getPath(), thisDuration, thisId, thisAlbum));
             }
             while (trackCursor.moveToNext());
         }
@@ -271,14 +246,14 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void getAlbumList() {
-        Hashtable<String, ArrayList<Song>> albums = new Hashtable<String, ArrayList<Song>>();
-        for (Song song :
-             songList) {
-            String albumName = song.getAlbumName();
+        Hashtable<String, ArrayList<OfflineSong>> albums = new Hashtable<String, ArrayList<OfflineSong>>();
+        for (OfflineSong offlineSong :
+                offlineSongList) {
+            String albumName = offlineSong.getAlbumName();
             if (!albums.containsKey(albumName)) {
-                albums.put(albumName, new ArrayList<Song>());
+                albums.put(albumName, new ArrayList<OfflineSong>());
             }
-            albums.get(albumName).add(song);
+            albums.get(albumName).add(offlineSong);
         }
         albums.forEach((name, songs) -> {
 //            Bitmap picture;
@@ -310,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
         String albumArt = preferences.getString(ALBUM_ART, null);
         String songList = preferences.getString(SONG_LIST, null);
         Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<Song>>() {}.getType();
+        Type type = new TypeToken<ArrayList<OfflineSong>>() {}.getType();
         int position = preferences.getInt(POSITION, -1);
         if (path != null) {
             SHOW_MINI_PLAYER = true;

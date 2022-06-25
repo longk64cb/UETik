@@ -9,13 +9,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -23,7 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.uetik.R;
 import com.example.uetik.models.Album;
-import com.example.uetik.models.Song;
+import com.example.uetik.models.OfflineSong;
 import com.example.uetik.ui.PlayerActivity;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
@@ -83,15 +81,15 @@ public class AlbumDetail extends AppCompatActivity {
 
      class SongAdapter extends BaseAdapter {
 
-        private final ArrayList<Song> songList;
+        private final ArrayList<OfflineSong> offlineSongList;
 
-        public SongAdapter(ArrayList<Song> songList) {
-            this.songList = songList;
+        public SongAdapter(ArrayList<OfflineSong> offlineSongList) {
+            this.offlineSongList = offlineSongList;
         }
 
         @Override
         public int getCount() {
-            return songList.size();
+            return offlineSongList.size();
         }
 
         @Override
@@ -111,10 +109,10 @@ public class AlbumDetail extends AppCompatActivity {
             TextView textArtist = myView.findViewById(R.id.txtArtistName);
             ImageView albumArt = myView.findViewById(R.id.imgSong);
             ImageView btnMenu = myView.findViewById(R.id.songMenu);
-            textSong.setText(songList.get(i).getTitle());
+            textSong.setText(offlineSongList.get(i).getTitle());
             textSong.setSelected(true);
-            textArtist.setText(songList.get(i).getArtist());
-            byte[] byteArray = getAlbumArtFromUri(songList.get(i).getSongPath());
+            textArtist.setText(offlineSongList.get(i).getArtist());
+            byte[] byteArray = getAlbumArtFromUri(offlineSongList.get(i).getSongPath());
             if (byteArray != null) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                 albumArt.setImageBitmap(bmp);

@@ -5,6 +5,7 @@ import static com.example.uetik.ApplicationClass.ACTION_PLAY;
 import static com.example.uetik.ApplicationClass.ACTION_PREVIOUS;
 import static com.example.uetik.ApplicationClass.CHANNEL_ID_2;
 import static com.example.uetik.MainActivity.onlineSongList;
+import static com.example.uetik.adapter.OnlineSongAdapter.PORT;
 import static com.example.uetik.ui.PlayerActivity.playMode;
 
 import android.app.Notification;
@@ -31,9 +32,9 @@ import com.example.uetik.models.OnlineSong;
 import com.example.uetik.ui.online.OnlineFragment;
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
-
 
 public class OnlineMusicService extends Service implements MediaPlayer.OnCompletionListener {
     private IBinder mBinder = new MyBinder();
@@ -56,6 +57,7 @@ public class OnlineMusicService extends Service implements MediaPlayer.OnComplet
         super.onCreate();
         onlineSongs = onlineSongList;
         mediaSessionCompat = new MediaSessionCompat(this, "My Audio");
+        Log.v("Test", "Start service");
     }
 
     @Nullable
@@ -192,22 +194,30 @@ public class OnlineMusicService extends Service implements MediaPlayer.OnComplet
 
     public void createMediaPlayer(int positionInner) {
         position = positionInner;
-        uri = Uri.parse(onlineSongs.get(position).path);
-        Log.d("checkuri", uri.getPath());
+//        uri = Uri.parse(onlineSongs.get(position).path);
+//        Log.d("checkUri", "val: " + uri);
         SharedPreferences.Editor editor = getSharedPreferences(MUSIC_LAST_PLAYED, MODE_PRIVATE)
                 .edit();
         Gson gson = new Gson();
         String json = gson.toJson(onlineSongs);
         editor.putInt(POSITION, position);
         editor.putString(SONG_LIST, json);
-        editor.putString(MUSIC_FILE, uri.getPath());
+        editor.putString(MUSIC_FILE, onlineSongs.get(position).path);
         editor.putString(SONG_TITLE, onlineSongs.get(position).songName);
         editor.putString(ARTIST_NAME, onlineSongs.get(position).author);
 //        editor.putString(ALBUM_ART, songs.get(position).getAlbumArt());
 //        editor.put
         editor.apply();
-        mediaPlayer = MediaPlayer.create(getBaseContext(), uri);
+//        mediaPlayer = MediaPlayer.create(getBaseContext(), uri);
+        mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(PORT + onlineSongs.get(position).path);
+            Log.d("checkduration", "value:" + mediaPlayer.getDuration());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 
     public void createMediaPlayer(int positionInner, List<OnlineSong> songsToPlay) {
         position = positionInner;

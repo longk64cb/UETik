@@ -5,11 +5,9 @@ import static com.example.uetik.ApplicationClass.ACTION_PLAY;
 import static com.example.uetik.ApplicationClass.ACTION_PREVIOUS;
 import static com.example.uetik.ApplicationClass.CHANNEL_ID_2;
 import static com.example.uetik.MainActivity.getAlbumArtFromUri;
-import static com.example.uetik.MainActivity.musicService;
-import static com.example.uetik.MainActivity.songList;
+import static com.example.uetik.MainActivity.offlineSongList;
 import static com.example.uetik.ui.PlayerActivity.playMode;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -22,7 +20,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.IBinder;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
@@ -31,11 +28,9 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import com.example.uetik.models.Song;
-import com.example.uetik.ui.PlayerActivity;
+import com.example.uetik.models.OfflineSong;
 import com.google.gson.Gson;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -43,7 +38,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     private IBinder mBinder = new MyBinder();
     private MediaPlayer mediaPlayer;
     private MediaSessionCompat mediaSessionCompat;
-    public ArrayList<Song> songs = new ArrayList<>();
+    public ArrayList<OfflineSong> offlineSongs = new ArrayList<>();
     private Uri uri;
     public int position = 0;
     ActionPlaying actionPlaying;
@@ -58,7 +53,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     @Override
     public void onCreate() {
         super.onCreate();
-        songs = songList;
+        offlineSongs = offlineSongList;
         mediaSessionCompat = new MediaSessionCompat(this, "My Audio");
     }
 
@@ -140,7 +135,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             } catch(Exception e){
                 Log.d("Nitif Activity", e.toString());
             }
-            if (songs != null)
+            if (offlineSongs != null)
             {
                 createMediaPlayer(position);
                 mediaPlayer.start();
@@ -197,35 +192,36 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
     public void createMediaPlayer(int positionInner) {
         position = positionInner;
-        uri = Uri.parse(songs.get(position).getSongPath());
+        uri = Uri.parse(offlineSongs.get(position).getSongPath());
         SharedPreferences.Editor editor = getSharedPreferences(MUSIC_LAST_PLAYED, MODE_PRIVATE)
                 .edit();
         Gson gson = new Gson();
-        String json = gson.toJson(songs);
+        String json = gson.toJson(offlineSongs);
         editor.putInt(POSITION, position);
         editor.putString(SONG_LIST, json);
         editor.putString(MUSIC_FILE, uri.getPath());
-        editor.putString(SONG_TITLE, songs.get(position).getTitle());
-        editor.putString(ARTIST_NAME, songs.get(position).getArtist());
+        editor.putString(SONG_TITLE, offlineSongs.get(position).getTitle());
+        editor.putString(ARTIST_NAME, offlineSongs.get(position).getArtist());
 //        editor.putString(ALBUM_ART, songs.get(position).getAlbumArt());
 //        editor.put
         editor.apply();
         mediaPlayer = MediaPlayer.create(getBaseContext(), uri);
+        Log.d("checkduration", "value:" + mediaPlayer.getDuration());
     }
 
-    public void createMediaPlayer(int positionInner, ArrayList<Song> songsToPlay) {
+    public void createMediaPlayer(int positionInner, ArrayList<OfflineSong> songsToPlay) {
         position = positionInner;
-        songs = songsToPlay;
-        uri = Uri.parse(songs.get(position).getSongPath());
+        offlineSongs = songsToPlay;
+//        uri = Uri.parse(offlineSongs.get(position).getSongPath());
         SharedPreferences.Editor editor = getSharedPreferences(MUSIC_LAST_PLAYED, MODE_PRIVATE)
                 .edit();
         Gson gson = new Gson();
-        String json = gson.toJson(songs);
+        String json = gson.toJson(offlineSongs);
         editor.putString(SONG_LIST, json);
         editor.putInt(POSITION, position);
         editor.putString(MUSIC_FILE, uri.getPath());
-        editor.putString(SONG_TITLE, songs.get(position).getTitle());
-        editor.putString(ARTIST_NAME, songs.get(position).getArtist());
+        editor.putString(SONG_TITLE, offlineSongs.get(position).getTitle());
+        editor.putString(ARTIST_NAME, offlineSongs.get(position).getArtist());
 //        editor.putString(ALBUM_ART, songs.get(position).getAlbumArt());
         editor.apply();
         mediaPlayer = MediaPlayer.create(getBaseContext(), uri);
@@ -244,10 +240,10 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         if (playMode != null) {
             switch (playMode) {
                 case SHUFFLE:
-                    position = getRandom(songs.size() - 1);
+                    position = getRandom(offlineSongs.size() - 1);
                     break;
                 case REPEAT:
-                    position = ((position + 1) % songs.size());
+                    position = ((position + 1) % offlineSongs.size());
                     break;
                 case REPEAT_ONE:
                     break;
@@ -295,7 +291,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         } else {
             mediaPlayer.stop();
             mediaPlayer.release();
-            position = ((position + 1) % songs.size());
+            position = ((position + 1) % offlineSongs.size());
             createMediaPlayer(position);
             onCompleted();
             start();
@@ -321,7 +317,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
                 .setAction(ACTION_NEXT);
         PendingIntent nextPending = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         Bitmap picture;
-        byte[] art = getAlbumArtFromUri(songs.get(position).getSongPath());
+        byte[] art = getAlbumArtFromUri(offlineSongs.get(position).getSongPath());
         if (art != null) {
             picture = BitmapFactory.decodeByteArray(art, 0, art.length);
         } else {
@@ -330,8 +326,8 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID_2)
                 .setSmallIcon(playPauseBtn)
                 .setLargeIcon(picture)
-                .setContentTitle(songs.get(position).getTitle())
-                .setContentText(songs.get(position).getArtist())
+                .setContentTitle(offlineSongs.get(position).getTitle())
+                .setContentText(offlineSongs.get(position).getArtist())
                 .addAction(R.drawable.prev, "Previous", prevPending)
                 .addAction(playPauseBtn, "Pause", pausePending)
                 .addAction(R.drawable.next, "Next", nextPending)

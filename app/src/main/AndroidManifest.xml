@@ -17,6 +17,10 @@
         android:roundIcon="@mipmap/ic_albumart_foreground"
         android:supportsRtl="true"
         android:name=".ApplicationClass">
+<!--        android:networkSecurityConfig="@xml/network_security_config"-->
+
+
+
         <activity
             android:name=".ui.PlayerActivity"
             android:theme="@style/statusBarStyle">
@@ -45,7 +49,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".MusicService" android:enabled="true"/>
+<!--        <service android:name=".MusicService" android:enabled="true"/>-->
+        <service android:name=".OnlineMusicService" android:enabled="true"/>
         
         <receiver android:name=".NotificationReceiver" android:enabled="true"
             android:exported="true">

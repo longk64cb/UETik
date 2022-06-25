@@ -3,8 +3,6 @@ package com.example.uetik.adapter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.net.Uri;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -14,7 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.uetik.R;
-import com.example.uetik.models.Song;
+import com.example.uetik.models.OfflineSong;
 import com.example.uetik.ui.home.HomeFragment;
 
 import java.util.ArrayList;
@@ -22,17 +20,17 @@ import java.util.ArrayList;
 public class SongAdapter extends BaseAdapter {
 
     private final HomeFragment fragment;
-    private ArrayList<Song> songList;
+    private ArrayList<OfflineSong> offlineSongList;
     private View adapterView;
 
-    public SongAdapter(HomeFragment homeFragment, ArrayList<Song> songList) {
+    public SongAdapter(HomeFragment homeFragment, ArrayList<OfflineSong> offlineSongList) {
         this.fragment = homeFragment;
-        this.songList = songList;
+        this.offlineSongList = offlineSongList;
     }
 
     @Override
     public int getCount() {
-        return songList.size();
+        return offlineSongList.size();
     }
 
     @Override
@@ -52,10 +50,10 @@ public class SongAdapter extends BaseAdapter {
         TextView textArtist = myView.findViewById(R.id.txtArtistName);
         ImageView albumArt = myView.findViewById(R.id.imgSong);
         ImageView btnMenu = myView.findViewById(R.id.songMenu);
-        textSong.setText(songList.get(i).getTitle());
+        textSong.setText(offlineSongList.get(i).getTitle());
         textSong.setSelected(true);
-        textArtist.setText(songList.get(i).getArtist());
-        byte[] byteArray = getAlbumArtFromUri(songList.get(i).getSongPath());
+        textArtist.setText(offlineSongList.get(i).getArtist());
+        byte[] byteArray = getAlbumArtFromUri(offlineSongList.get(i).getSongPath());
         if (byteArray != null) {
             Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
             albumArt.setImageBitmap(bmp);
@@ -89,10 +87,10 @@ public class SongAdapter extends BaseAdapter {
         return art;
     }
 
-    public void updateList(ArrayList<Song> songs)
+    public void updateList(ArrayList<OfflineSong> offlineSongs)
     {
-        songList = new ArrayList<>();
-        songList.addAll(songs);
+        offlineSongList = new ArrayList<>();
+        offlineSongList.addAll(offlineSongs);
         notifyDataSetChanged();
     }
 }

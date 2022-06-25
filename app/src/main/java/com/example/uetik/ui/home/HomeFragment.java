@@ -1,6 +1,6 @@
 package com.example.uetik.ui.home;
 
-import static com.example.uetik.MainActivity.songList;
+import static com.example.uetik.MainActivity.offlineSongList;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -28,7 +28,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.uetik.R;
 import com.example.uetik.adapter.SongAdapter;
 import com.example.uetik.databinding.FragmentHomeBinding;
-import com.example.uetik.models.Song;
+import com.example.uetik.models.OfflineSong;
 import com.example.uetik.ui.ExpandableHeightListView;
 import com.example.uetik.ui.PlayerActivity;
 import com.google.android.material.snackbar.Snackbar;
@@ -74,7 +74,7 @@ public class HomeFragment extends Fragment implements Serializable, SearchView.O
             Log.v("ListView", "Found listView home");
         }
 
-        songAdapter = new SongAdapter(this, songList);
+        songAdapter = new SongAdapter(this, offlineSongList);
         listView.setAdapter(songAdapter);
         listView.setScrollContainer(false);
         listView.setExpanded(true);
@@ -88,7 +88,7 @@ public class HomeFragment extends Fragment implements Serializable, SearchView.O
                     String songName = (String) songNameTxt.getText();
                     String artistName = (String) artistNameTxt.getText();
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("songList", (Serializable) songList);
+                    bundle.putSerializable("songList", (Serializable) offlineSongList);
                     startActivity(new Intent(getActivity().getApplicationContext(), PlayerActivity.class)
                             .putExtra("songName", songName)
                             .putExtra("songList", bundle)
@@ -107,8 +107,8 @@ public class HomeFragment extends Fragment implements Serializable, SearchView.O
     }
 
     public void deleteSong(int position, View view) {
-        Uri contentUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Long.parseLong(songList.get(position).getId()));
-        File file = new File(songList.get(position).getSongPath());
+        Uri contentUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Long.parseLong(offlineSongList.get(position).getId()));
+        File file = new File(offlineSongList.get(position).getSongPath());
         Log.v("Test", file.getAbsolutePath());
         if (file.exists()) {
             Log.v("Test", "Exists");
@@ -118,7 +118,7 @@ public class HomeFragment extends Fragment implements Serializable, SearchView.O
         boolean deleted = delete(getContext(), file);
         if (deleted) {
             getContext().getContentResolver().delete(contentUri, null, null);
-            songList.remove(position);
+            offlineSongList.remove(position);
             Snackbar.make(view, "Song Deleted: ", Snackbar.LENGTH_LONG)
                     .show();
             Log.v("Test", "deleted");
@@ -168,12 +168,12 @@ public class HomeFragment extends Fragment implements Serializable, SearchView.O
     @Override
     public boolean onQueryTextChange(String newText) {
         String userInput = newText.toLowerCase();
-        ArrayList<Song> searchFiles = new ArrayList<>();
-        for (Song song : songList)
+        ArrayList<OfflineSong> searchFiles = new ArrayList<>();
+        for (OfflineSong offlineSong : offlineSongList)
         {
-            if(song.getTitle().toLowerCase().contains(userInput))
+            if(offlineSong.getTitle().toLowerCase().contains(userInput))
             {
-                searchFiles.add(song);
+                searchFiles.add(offlineSong);
             }
         }
         songAdapter.updateList(searchFiles);

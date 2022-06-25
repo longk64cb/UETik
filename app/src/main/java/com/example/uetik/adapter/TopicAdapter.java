@@ -1,5 +1,7 @@
 package com.example.uetik.adapter;
 
+import static com.example.uetik.adapter.OnlineSongAdapter.PORT;
+
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,7 +51,7 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     public void onBindViewHolder(TopicAdapter.TopicViewHolder holder, int position) {
         Topic t = topicList.get(position);
         Picasso.with(holder.ivTopicArt.getContext())
-                .load(t.imgPath)
+                .load(PORT + t.imgPath)
                 .into(holder.ivTopicArt);
         holder.tvTopicName.setText(t.topicName);
     }

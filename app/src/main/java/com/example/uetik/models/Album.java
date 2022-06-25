@@ -1,7 +1,5 @@
 package com.example.uetik.models;
 
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -10,18 +8,18 @@ import java.util.ArrayList;
 public class Album implements Parcelable {
     private String name;
     private String albumArt;
-    private ArrayList<Song> songs;
+    private ArrayList<OfflineSong> offlineSongs;
 
-    public Album (String name, String albumArt, ArrayList<Song> songs) {
+    public Album (String name, String albumArt, ArrayList<OfflineSong> offlineSongs) {
         this.name = name;
         this.albumArt = albumArt;
-        this.songs = songs;
+        this.offlineSongs = offlineSongs;
     }
 
     protected Album(Parcel in) {
         name = in.readString();
         albumArt = in.readString();
-        songs = in.createTypedArrayList(Song.CREATOR);
+        offlineSongs = in.createTypedArrayList(OfflineSong.CREATOR);
     }
 
     public static final Creator<Album> CREATOR = new Creator<Album>() {
@@ -36,8 +34,8 @@ public class Album implements Parcelable {
         }
     };
 
-    public ArrayList<Song> getSongs() {
-        return songs;
+    public ArrayList<OfflineSong> getSongs() {
+        return offlineSongs;
     }
 
     public String getName() {
@@ -57,6 +55,6 @@ public class Album implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(name);
         parcel.writeString(albumArt);
-        parcel.writeTypedList(songs);
+        parcel.writeTypedList(offlineSongs);
     }
 }

@@ -6,9 +6,8 @@ import static com.example.uetik.ApplicationClass.ACTION_NEXT;
 import static com.example.uetik.ApplicationClass.ACTION_PLAY;
 import static com.example.uetik.ApplicationClass.ACTION_PREVIOUS;
 import static com.example.uetik.ApplicationClass.CHANNEL_ID_2;
-import static com.example.uetik.MainActivity.musicService;
-import static com.example.uetik.MainActivity.onlineSongList;
-import static com.example.uetik.MainActivity.songList;
+//import static com.example.uetik.MainActivity.musicService;
+import static com.example.uetik.MainActivity.offlineSongList;
 import static com.example.uetik.adapter.OnlineSongAdapter.PORT;
 
 import androidx.annotation.NonNull;
@@ -26,7 +25,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,9 +32,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.media.session.MediaSessionCompat;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -48,34 +43,19 @@ import com.cleveroad.audiovisualization.AudioVisualization;
 import com.cleveroad.audiovisualization.DbmHandler;
 import com.cleveroad.audiovisualization.VisualizerDbmHandler;
 import com.example.uetik.ActionPlaying;
-import com.example.uetik.MusicService;
 import com.example.uetik.NotificationReceiver;
+import com.example.uetik.OnlineMusicService;
 import com.example.uetik.PlayMode;
 import com.example.uetik.R;
-import com.example.uetik.databinding.ActivityPlayerBinding;
 import com.example.uetik.databinding.OnlineActivityPlayerBinding;
 import com.example.uetik.models.OnlineSong;
-import com.example.uetik.models.Song;
-import com.example.uetik.models.Topic;
 import com.masoudss.lib.SeekBarOnProgressChanged;
 import com.masoudss.lib.WaveformSeekBar;
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
-import com.squareup.moshi.Types;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class OnlinePlayerActivity extends AppCompatActivity implements ActionPlaying, ServiceConnection {
 
@@ -96,6 +76,7 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
     private Handler handler = new Handler();
     private Thread playThread, prevThread, nextThread;
     //    private MusicService musicService;
+    private OnlineMusicService onlineMusicService;
     private MediaSessionCompat mediaSessionCompat;
 
     public static PlayMode playMode;
@@ -129,14 +110,13 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         mediaSessionCompat = new MediaSessionCompat(getBaseContext(), "My Audio");
 
         showNotification(R.drawable.pause);
-        if (musicService != null) {
-            if (musicService.getMediaPlayer() != null && musicService.isPlaying()) {
-                musicService.stop();
-                musicService.release();
+        if (onlineMusicService != null) {
+            if (onlineMusicService.getMediaPlayer() != null && onlineMusicService.isPlaying()) {
+                onlineMusicService.stop();
+                onlineMusicService.release();
             }
         }
-
-        Intent intent = new Intent(this, MusicService.class);
+        Intent intent = new Intent(this, OnlineMusicService.class);
         Bundle bundleService = new Bundle();
         bundleService.putSerializable("onlineSongList", (Serializable) onlineSongList);
         intent.putExtra("servicePosition", position)
@@ -170,8 +150,8 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         waveformSeekBar.setOnProgressChanged(new SeekBarOnProgressChanged() {
             @Override
             public void onProgressChanged(@NonNull WaveformSeekBar waveformSeekBar, float v, boolean b) {
-                if (musicService != null && b) {
-                    musicService.seekTo((int)v * 1000);
+                if (onlineMusicService != null && b) {
+                    onlineMusicService.seekTo((int)v * 1000);
                 }
             }
         });
@@ -179,7 +159,7 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
 
     @Override
     protected void onResume() {
-        Intent intent = new Intent(this, MusicService.class);
+        Intent intent = new Intent(this, OnlineMusicService.class);
         bindService(intent, this, BIND_AUTO_CREATE);
         playThreadBtn();
         prevThreadBtn();
@@ -261,16 +241,16 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
     }
 
     public void playPauseBtnClicked() {
-        if (musicService.isPlaying()) {
+        if (onlineMusicService.isPlaying()) {
             btnPlay.setBackgroundResource(R.drawable.play);
             showNotification(R.drawable.play);
-            musicService.pause();
+            onlineMusicService.pause();
             audioVisualization.onPause();
             OnlinePlayerActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (musicService != null) {
-                        int mCurrentPosition = musicService.getCurrentPosition() / 1000;
+                    if (onlineMusicService != null) {
+                        int mCurrentPosition = onlineMusicService.getCurrentPosition() / 1000;
                         waveformSeekBar.setProgress(mCurrentPosition);
                         currentDuration.setText(formatTime(mCurrentPosition));
                     }
@@ -280,13 +260,13 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         } else {
             btnPlay.setBackgroundResource(R.drawable.pause);
             showNotification(R.drawable.pause);
-            musicService.start();
+            onlineMusicService.start();
             audioVisualization.onResume();
             OnlinePlayerActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (musicService != null) {
-                        int mCurrentPosition = musicService.getCurrentPosition() / 1000;
+                    if (onlineMusicService != null) {
+                        int mCurrentPosition = onlineMusicService.getCurrentPosition() / 1000;
                         waveformSeekBar.setProgress(mCurrentPosition);
                         currentDuration.setText(formatTime(mCurrentPosition));
                     }
@@ -298,8 +278,8 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
 
     public void nextBtnClicked() {
 //        Log.v("Test", "Next Click");
-        musicService.stop();
-        musicService.release();
+        onlineMusicService.stop();
+        onlineMusicService.release();
         switch (playMode) {
             case SHUFFLE:
                 position = getRandom(onlineSongList.size() - 1);
@@ -311,35 +291,35 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
                 break;
         }
         setPlayingSongView();
-        musicService.createMediaPlayer(position);
-        musicService.onCompleted();
-        waveformSeekBar.setMaxProgress(musicService.getDuration() / 1000);
+        onlineMusicService.createMediaPlayer(position);
+        onlineMusicService.onCompleted();
+        waveformSeekBar.setMaxProgress(onlineMusicService.getDuration() / 1000);
         showNotification(R.drawable.pause);
-        musicService.start();
+        onlineMusicService.start();
         OnlinePlayerActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (musicService != null) {
-                    int mCurrentPosition = musicService.getCurrentPosition() / 1000;
+                if (onlineMusicService != null) {
+                    int mCurrentPosition = onlineMusicService.getCurrentPosition() / 1000;
                     waveformSeekBar.setProgress(mCurrentPosition);
                     currentDuration.setText(formatTime(mCurrentPosition));
                 }
                 handler.postDelayed(this, 1000);
             }
         });
-        if (musicService.isPlaying()) {
+        if (onlineMusicService.isPlaying()) {
             btnPlay.setBackgroundResource(R.drawable.pause);
         } else {
             btnPlay.setBackgroundResource(R.drawable.play);
         }
-        VisualizerDbmHandler visualizerHandler = DbmHandler.Factory.newVisualizerHandler(getBaseContext(), musicService.getAudioSessionId());
+        VisualizerDbmHandler visualizerHandler = DbmHandler.Factory.newVisualizerHandler(getBaseContext(), onlineMusicService.getAudioSessionId());
         audioVisualization.linkTo(visualizerHandler);
         audioVisualization.onResume();
     }
 
     public void prevBtnClicked() {
-        musicService.stop();
-        musicService.release();
+        onlineMusicService.stop();
+        onlineMusicService.release();
         switch (playMode) {
             case SHUFFLE:
                 position = getRandom(onlineSongList.size() - 1);
@@ -350,29 +330,30 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
                 break;
         }
         setPlayingSongView();
-        musicService.createMediaPlayer(position);
-        waveformSeekBar.setMaxProgress(musicService.getDuration() / 1000);
-        musicService.onCompleted();
+        onlineMusicService.createMediaPlayer(position);
+        waveformSeekBar.setMaxProgress(onlineMusicService.getDuration() / 1000);
+        onlineMusicService.onCompleted();
         showNotification(R.drawable.pause);
-        musicService.start();
+        Log.d("checkcheck", "va" + onlineMusicService);
+        onlineMusicService.start();
         OnlinePlayerActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (musicService != null) {
-                    int mCurrentPosition = musicService.getCurrentPosition() / 1000;
+                if (onlineMusicService != null) {
+                    int mCurrentPosition = onlineMusicService.getCurrentPosition() / 1000;
                     waveformSeekBar.setProgress(mCurrentPosition);
                     currentDuration.setText(formatTime(mCurrentPosition));
                 }
                 handler.postDelayed(this, 1000);
             }
         });
-        if (musicService.isPlaying()) {
+        if (onlineMusicService.isPlaying()) {
             btnPlay.setBackgroundResource(R.drawable.pause);
         } else {
             btnPlay.setBackgroundResource(R.drawable.play);
         }
-        musicService.start();
-        VisualizerDbmHandler visualizerHandler = DbmHandler.Factory.newVisualizerHandler(getBaseContext(), musicService.getAudioSessionId());
+        onlineMusicService.start();
+        VisualizerDbmHandler visualizerHandler = DbmHandler.Factory.newVisualizerHandler(getBaseContext(), onlineMusicService.getAudioSessionId());
         audioVisualization.linkTo(visualizerHandler);
         audioVisualization.onResume();
     }
@@ -381,7 +362,7 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         OnlineSong os = onlineSongList.get(position);
         songUri = Uri.parse(PORT + os.path);
         imgUri = Uri.parse(PORT + os.imgPath);
-        if (musicService == null) {
+        if (onlineMusicService == null) {
             Log.v("Test", "No music service.");
         }
 
@@ -395,7 +376,7 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         }
         int durationTotal = os.duration;
         endSong.setText(formatTime(durationTotal));
-        waveformSeekBar.setSampleFrom(songList.get(position).getSongPath());
+        waveformSeekBar.setSampleFrom(offlineSongList.get(position).getSongPath());
     }
 
     public int getRandom(int i) {
@@ -426,10 +407,10 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
 
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder service) {
-        MusicService.MyBinder myBinder = (MusicService.MyBinder) service;
-        musicService = myBinder.getService();
-        musicService.setCallBack(this);
-        Toast.makeText(this, "Connected" + musicService, Toast.LENGTH_SHORT).show();
+        OnlineMusicService.MyBinder myBinder = (OnlineMusicService.MyBinder) service;
+        onlineMusicService = myBinder.getService();
+        onlineMusicService.setCallBack(this);
+        Toast.makeText(this, "Connected" + onlineMusicService, Toast.LENGTH_SHORT).show();
 //        if (musicService.isPlaying()) {
 //            musicService.stop();
 //            musicService.release();
@@ -437,13 +418,13 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
 //        musicService.createMediaPlayer(position);
 //        musicService.start();
 
-        musicService.onCompleted();
+        onlineMusicService.onCompleted();
         showNotification(R.drawable.pause);
 
-        waveformSeekBar.setMaxProgress(musicService.getDuration() / 1000);
+        waveformSeekBar.setMaxProgress(onlineMusicService.getDuration() / 1000);
 
-        Log.v("Test", "id:" + String.valueOf(musicService.getAudioSessionId()));
-        VisualizerDbmHandler visualizerHandler = DbmHandler.Factory.newVisualizerHandler(getBaseContext(), musicService.getAudioSessionId());
+        Log.v("Test", "id:" + String.valueOf(onlineMusicService.getAudioSessionId()));
+        VisualizerDbmHandler visualizerHandler = DbmHandler.Factory.newVisualizerHandler(getBaseContext(), onlineMusicService.getAudioSessionId());
         audioVisualization.linkTo(visualizerHandler);
         audioVisualization.onResume();
 
@@ -459,8 +440,8 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         OnlinePlayerActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (musicService != null) {
-                    int mCurrentPosition = musicService.getCurrentPosition() / 1000;
+                if (onlineMusicService != null) {
+                    int mCurrentPosition = onlineMusicService.getCurrentPosition() / 1000;
                     waveformSeekBar.setProgress(mCurrentPosition);
                     currentDuration.setText(formatTime(mCurrentPosition));
                 }
@@ -471,7 +452,7 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
-        musicService = null;
+        onlineMusicService = null;
     }
 
     private void showNotification(int playPauseBtn) {
