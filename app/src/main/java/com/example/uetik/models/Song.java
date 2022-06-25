@@ -10,13 +10,13 @@ import java.io.File;
 import java.io.Serializable;
 
 public class Song implements Parcelable {
-    private String artist;
-    private String title;
+    public String artist;
+    public String title;
 //    private String albumArt;
-    private String songPath;
-    private String duration;
-    private String id;
-    private String albumName;
+    public String songPath;
+    public String duration;
+    public String id;
+    public String albumName;
 
     public Song (String title, String artist, String albumArt, String songPath, String duration, String id, String albumName) {
         this.title = title;

@@ -1,6 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10"
+    android:theme="@style/statusBarStyle">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <com.cleveroad.audiovisualization.GLAudioVisualizationView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+
+        android:id="@+id/visualizer_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:av_backgroundColor="@color/av_color_bg"
+        app:av_bubblesPerLayer="16"
+        app:av_bubblesRandomizeSizes="true"
+        app:av_bubblesSize="@dimen/bubble_size"
+        app:av_layersCount="6"
+        app:av_wavesCount="7"
+        app:av_wavesFooterHeight="@dimen/footer_height"
+        app:av_wavesHeight="@dimen/wave_height"></com.cleveroad.audiovisualization.GLAudioVisualizationView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="10">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="6">
+
+            <com.mikhaellopez.circularimageview.CircularImageView
+                android:id="@+id/alterAlbumArt"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:src="@drawable/album_art"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </com.mikhaellopez.circularimageview.CircularImageView>
+
+            <com.mikhaellopez.circularimageview.CircularImageView
+                android:id="@+id/albumArtPlayer"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:src="@drawable/album_art"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </com.mikhaellopez.circularimageview.CircularImageView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtPlayingSongName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:text="Song name"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="40dp">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/txtPlayingArtistName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Artist"
+                android:textAlignment="center"
+                android:textColor="@color/gray"
+                android:textSize="23dp">
+
+            </TextView>
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/currentDuration"
+                android:layout_width="45dp"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="10dp"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/waveformSeekBar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </TextView>
+
+            <com.masoudss.lib.WaveformSeekBar
+                android:id="@+id/waveformSeekBar"
+                android:layout_width="280dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:wave_background_color="@color/white"
+                app:wave_corner_radius="2dp"
+                app:wave_gap="1dp"
+                app:wave_gravity="center"
+                app:wave_max_progress="100"
+                app:wave_min_height="5dp"
+                app:wave_progress="33"
+                app:wave_progress_color="@color/av_color_bg"
+                app:wave_width="2dp" />
+
+            <TextView
+                android:id="@+id/endSong"
+                android:layout_width="45dp"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="10dp"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/waveformSeekBar"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </TextView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3">
+
+            <Button
+                android:id="@+id/playModeBtn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="20dp"
+                android:background="@drawable/repeat">
+
+            </Button>
+            <Button
+                android:id="@+id/prevSong"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@drawable/prev"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/playSong"
+                android:layout_marginEnd="15dp">
+
+            </Button>
+
+            <Button
+                android:id="@+id/playSong"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:background="@drawable/pause">
+
+            </Button>
+
+            <Button
+                android:id="@+id/nextSong"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@drawable/next"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/playSong"
+                android:layout_marginStart="15dp">
+
+            </Button>
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/favourite"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="20dp">
+
+            </Button>
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
+
+
+

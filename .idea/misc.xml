@@ -56,6 +56,12 @@
         <entry key="..\:/Android/UETik/app/src/main/res/mipmap-anydpi-v26/ic_albumart_round.xml" value="0.1" />
         <entry key="..\:/Android/UETik/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.21614583333333334" />
         <entry key="..\:/Android/UETik/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.21614583333333334" />
+        <entry key="..\:/UETik/app/src/main/res/drawable/ic_baseline_music_note_24.xml" value="0.1815" />
+        <entry key="..\:/UETik/app/src/main/res/layout/activity_album_detail.xml" value="0.30364583333333334" />
+        <entry key="..\:/UETik/app/src/main/res/layout/activity_topic_detail.xml" value="0.3625" />
+        <entry key="..\:/UETik/app/src/main/res/layout/fragment_topics.xml" value="0.30364583333333334" />
+        <entry key="..\:/UETik/app/src/main/res/layout/online_activity_player.xml" value="0.3625" />
+        <entry key="..\:/UETik/app/src/main/res/layout/topic_item.xml" value="0.30364583333333334" />
       </map>
     </option>
   </component>

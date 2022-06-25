@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="190dp"
+    android:layout_height="190dp"
+    android:layout_margin="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/album_item"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="10dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/primary_3"
+        android:id="@+id/relative_layout">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="185dp"
+            android:id="@+id/topic_image"
+            android:src="@drawable/album_art"/>
+        <TextView
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/topic_name"
+            android:layout_alignParentBottom="true"
+            android:text="Topic"
+            android:textColor="@color/white"
+            android:singleLine="true"
+            android:gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_marginVertical="10dp"
+            android:textStyle="bold"/>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

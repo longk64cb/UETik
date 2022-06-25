@@ -91,8 +91,9 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     public int onStartCommand(Intent intent, int flags, int startId) {
         int myPosition = intent.getIntExtra("servicePosition", -1);
         String actionName = intent.getStringExtra("ActionName");
-        Bundle bundle = intent.getBundleExtra("songList");
-        songs = (ArrayList) bundle.getSerializable("songList");
+        Bundle bundle1 = intent.getBundleExtra("songList");
+        Log.d("check3a", "3a: " + bundle1);
+//        songs = (ArrayList) bundle1.getSerializable("songList");
         Log.v("Test", "Start service");
 //        if (mediaPlayer != null) {
 //            Log.v("Test", "Mediaplayer is not null");

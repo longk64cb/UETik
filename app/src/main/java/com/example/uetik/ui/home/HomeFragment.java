@@ -81,19 +81,19 @@ public class HomeFragment extends Fragment implements Serializable, SearchView.O
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                TextView songNameTxt = (TextView) view.findViewById(R.id.txtSongName);
-                TextView artistNameTxt = (TextView) view.findViewById(R.id.txtArtistName);
-                String songName = (String) songNameTxt.getText();
-                String artistName = (String) artistNameTxt.getText();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("songList", (Serializable) songList);
-                startActivity(new Intent(getActivity().getApplicationContext(), PlayerActivity.class)
-                        .putExtra("songName", songName)
-                        .putExtra("songList", bundle)
-                        .putExtra("pos", i));
-            }
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    TextView songNameTxt = (TextView) view.findViewById(R.id.txtSongName);
+                    TextView artistNameTxt = (TextView) view.findViewById(R.id.txtArtistName);
+                    String songName = (String) songNameTxt.getText();
+                    String artistName = (String) artistNameTxt.getText();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("songList", (Serializable) songList);
+                    startActivity(new Intent(getActivity().getApplicationContext(), PlayerActivity.class)
+                            .putExtra("songName", songName)
+                            .putExtra("songList", bundle)
+                            .putExtra("pos", i));
+                }
         });
 
 //        final TextView textView = binding.textHome;

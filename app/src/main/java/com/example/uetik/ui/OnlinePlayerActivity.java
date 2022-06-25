@@ -9,6 +9,7 @@ import static com.example.uetik.ApplicationClass.CHANNEL_ID_2;
 import static com.example.uetik.MainActivity.musicService;
 import static com.example.uetik.MainActivity.onlineSongList;
 import static com.example.uetik.MainActivity.songList;
+import static com.example.uetik.adapter.OnlineSongAdapter.PORT;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -90,7 +91,7 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
     private OnlineActivityPlayerBinding binding;
     private AudioVisualization audioVisualization;
     private WaveformSeekBar waveformSeekBar;
-    private ImageView albumArt;
+    private ImageView topicArt;
 
     private Handler handler = new Handler();
     private Thread playThread, prevThread, nextThread;
@@ -116,18 +117,15 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         btnPlayMode = findViewById(R.id.playModeBtn);
         audioVisualization = (AudioVisualization) findViewById(R.id.visualizer_view);
         waveformSeekBar = (WaveformSeekBar) findViewById(R.id.waveformSeekBar);
-        albumArt = findViewById(R.id.albumArtPlayer);
+        topicArt = findViewById(R.id.albumArtPlayer);
 
         playMode = PlayMode.REPEAT;
 
         Intent i = this.getIntent();
-        Log.d("check0b", "0b: " + i);
         Bundle bundle = i.getBundleExtra("onlineSongList");
-        Log.d("check1b", "1b: " + bundle);
         onlineSongList = (List<OnlineSong>) bundle.getSerializable("onlineSongList");
-        Log.d("check2b", "2b: " + bundle);
         position = i.getIntExtra("pos", 0);
-
+        Log.d("OPA", "val: " + onlineSongList);
         mediaSessionCompat = new MediaSessionCompat(getBaseContext(), "My Audio");
 
         showNotification(R.drawable.pause);
@@ -147,8 +145,8 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
 
         setPlayingSongView();
 
-//        int durationTotal = Integer.parseInt((String) songList.get(position).getDuration()) / 1000;
-//        endSong.setText(formatTime(durationTotal));
+        int durationTotal = onlineSongList.get(position).duration;
+        endSong.setText(formatTime(durationTotal));
 
         btnPlayMode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,7 +179,6 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
 
     @Override
     protected void onResume() {
-        Log.v("Test", "Bruh");
         Intent intent = new Intent(this, MusicService.class);
         bindService(intent, this, BIND_AUTO_CREATE);
         playThreadBtn();
@@ -215,7 +212,6 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
                     @Override
                     public void onClick(View view) {
                         playPauseBtnClicked();
-                        Log.v("Test", "OOOO");
                     }
                 });
             }
@@ -266,7 +262,6 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
 
     public void playPauseBtnClicked() {
         if (musicService.isPlaying()) {
-            Log.v("Test", "is playing");
             btnPlay.setBackgroundResource(R.drawable.play);
             showNotification(R.drawable.play);
             musicService.pause();
@@ -309,6 +304,8 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
             case SHUFFLE:
                 position = getRandom(onlineSongList.size() - 1);
                 break;
+            case REPEAT_ONE:
+                break;
             default:
                 position = ((position + 1) % onlineSongList.size());
                 break;
@@ -347,7 +344,6 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
             case SHUFFLE:
                 position = getRandom(onlineSongList.size() - 1);
                 Log.d("checkpos", "" + position);
-
                 break;
             default:
                 position = ((position - 1) < 0 ? (onlineSongList.size() - 1) : (position - 1));
@@ -382,21 +378,22 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
     }
 
     private void setPlayingSongView() {
-        songUri = Uri.parse(onlineSongList.get(position).path);
-        imgUri = Uri.parse(onlineSongList.get(position).imgPath);
+        OnlineSong os = onlineSongList.get(position);
+        songUri = Uri.parse(PORT + os.path);
+        imgUri = Uri.parse(PORT + os.imgPath);
         if (musicService == null) {
             Log.v("Test", "No music service.");
         }
-//        musicService.createMediaPlayer(position);
-        txtSongName.setText(onlineSongList.get(position).songName);
-        txtArtistName.setText(onlineSongList.get(position).author);
-//        byte[] byteArray = getAlbumArtFromUri(onlineSongList.get(position).imgPath);
-        if (onlineSongList.get(position).imgPath != null) {
-            albumArt.setImageURI(imgUri);
+
+        txtSongName.setText(os.songName);
+        txtArtistName.setText(os.author);
+//
+        if (os.imgPath != null) {
+            Picasso.with(topicArt.getContext()).load(PORT + os.imgPath).into(topicArt);
         } else {
-            albumArt.setImageResource(R.drawable.ic_baseline_music_note_24);
+            topicArt.setImageResource(R.drawable.ic_baseline_music_note_24);
         }
-        int durationTotal = Integer.parseInt((String) songList.get(position).getDuration()) / 1000;
+        int durationTotal = os.duration;
         endSong.setText(formatTime(durationTotal));
         waveformSeekBar.setSampleFrom(songList.get(position).getSongPath());
     }
@@ -493,7 +490,7 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
                 .setAction(ACTION_NEXT);
         PendingIntent nextPending = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         Bitmap picture;
-        byte[] art = getAlbumArtFromUri(songList.get(position).getSongPath());
+        byte[] art = getAlbumArtFromUri(PORT + onlineSongList.get(position).path);
         if (art != null) {
             picture = BitmapFactory.decodeByteArray(art, 0, art.length);
         } else {
@@ -502,8 +499,8 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID_2)
                 .setSmallIcon(playPauseBtn)
                 .setLargeIcon(picture)
-                .setContentTitle(songList.get(position).getTitle())
-                .setContentText(songList.get(position).getArtist())
+                .setContentTitle(onlineSongList.get(position).songName)
+                .setContentText(onlineSongList.get(position).author)
                 .addAction(R.drawable.prev, "Previous", prevPending)
                 .addAction(playPauseBtn, "Pause", pausePending)
                 .addAction(R.drawable.next, "Next", nextPending)

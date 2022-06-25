@@ -1,10 +1,9 @@
-package com.example.uetik.ui;
+package com.example.uetik;
 
 import static com.example.uetik.ApplicationClass.ACTION_NEXT;
 import static com.example.uetik.ApplicationClass.ACTION_PLAY;
 import static com.example.uetik.ApplicationClass.ACTION_PREVIOUS;
 import static com.example.uetik.ApplicationClass.CHANNEL_ID_2;
-import static com.example.uetik.MainActivity.getAlbumArtFromUri;
 import static com.example.uetik.MainActivity.onlineSongList;
 import static com.example.uetik.ui.PlayerActivity.playMode;
 
@@ -28,11 +27,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import com.example.uetik.ActionPlaying;
-import com.example.uetik.MusicService;
-import com.example.uetik.NotificationReceiver;
-import com.example.uetik.R;
 import com.example.uetik.models.OnlineSong;
+import com.example.uetik.ui.online.OnlineFragment;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -197,6 +193,7 @@ public class OnlineMusicService extends Service implements MediaPlayer.OnComplet
     public void createMediaPlayer(int positionInner) {
         position = positionInner;
         uri = Uri.parse(onlineSongs.get(position).path);
+        Log.d("checkuri", uri.getPath());
         SharedPreferences.Editor editor = getSharedPreferences(MUSIC_LAST_PLAYED, MODE_PRIVATE)
                 .edit();
         Gson gson = new Gson();
@@ -215,7 +212,9 @@ public class OnlineMusicService extends Service implements MediaPlayer.OnComplet
     public void createMediaPlayer(int positionInner, List<OnlineSong> songsToPlay) {
         position = positionInner;
         onlineSongs = songsToPlay;
+        OnlineSong os = onlineSongs.get(position);
         uri = Uri.parse(onlineSongs.get(position).path);
+
         SharedPreferences.Editor editor = getSharedPreferences(MUSIC_LAST_PLAYED, MODE_PRIVATE)
                 .edit();
         Gson gson = new Gson();
@@ -223,8 +222,8 @@ public class OnlineMusicService extends Service implements MediaPlayer.OnComplet
         editor.putString(SONG_LIST, json);
         editor.putInt(POSITION, position);
         editor.putString(MUSIC_FILE, uri.getPath());
-        editor.putString(SONG_TITLE, onlineSongs.get(position).songName);
-        editor.putString(ARTIST_NAME, onlineSongs.get(position).author);
+        editor.putString(SONG_TITLE, os.songName);
+        editor.putString(ARTIST_NAME, os.author);
 //        editor.putString(ALBUM_ART, songs.get(position).getAlbumArt());
         editor.apply();
         mediaPlayer = MediaPlayer.create(getBaseContext(), uri);

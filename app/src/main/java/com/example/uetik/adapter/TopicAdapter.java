@@ -21,12 +21,12 @@ import java.util.List;
 public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHolder> {
     private final OnlineFragment fragment;
     private List<Topic> topicList;
-    private Context context;
-    private View adapterView;
+    private TopicClickListener mTopicClickListener;
 
-    public TopicAdapter(List<Topic> topicList, OnlineFragment fragment){
+    public TopicAdapter(List<Topic> topicList, OnlineFragment fragment, TopicClickListener topicClickListener){
         this.topicList = topicList;
         this.fragment = fragment;
+        this.mTopicClickListener = topicClickListener;
     }
     @Override
     public long getItemId(int i) {
@@ -41,9 +41,9 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     @Override
     public TopicAdapter.TopicViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.album_item, parent, false);
+                .inflate(R.layout.topic_item, parent, false);
 
-        return new TopicAdapter.TopicViewHolder(itemView);
+        return new TopicAdapter.TopicViewHolder(itemView, mTopicClickListener);
     }
     @Override
     public void onBindViewHolder(TopicAdapter.TopicViewHolder holder, int position) {
@@ -52,21 +52,33 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
                 .load(t.imgPath)
                 .into(holder.ivTopicArt);
         holder.tvTopicName.setText(t.topicName);
-        Log.d("img", "value: " + t.imgPath);
     }
 
-    public static class TopicViewHolder extends RecyclerView.ViewHolder {
+    public static class TopicViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView tvTopicName;
         public ImageView ivTopicArt;
-        public TopicViewHolder(View itemView) {
+        TopicClickListener topicClickListener;
+        public TopicViewHolder(View itemView, TopicClickListener topicClickListener) {
             super(itemView);
-            tvTopicName = itemView.findViewById(R.id.album_name);
-            ivTopicArt =  itemView.findViewById(R.id.album_image);
+            tvTopicName = itemView.findViewById(R.id.topic_name);
+            ivTopicArt =  itemView.findViewById(R.id.topic_image);
+            tvTopicName.setSelected(true);
+            this.topicClickListener = topicClickListener;
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            topicClickListener.onTopicClick(view, getAbsoluteAdapterPosition());
         }
     }
-//    public void updateList(List<OnlineSong> songs)
-//    {
-//        onlineSongList.addAll(songs);
-//        notifyDataSetChanged();
-//    }
+    public void updateList(List<Topic> topic)
+    {
+        topicList.addAll(topic);
+        notifyDataSetChanged();
+    }
+    public interface TopicClickListener{
+        void onTopicClick(View view, int pos);
+
+    }
 }

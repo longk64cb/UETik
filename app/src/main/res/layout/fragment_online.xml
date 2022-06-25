@@ -26,7 +26,7 @@
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:id="@+id/home_toolbar"
+                android:id="@+id/online_toolbar"
                 app:layout_collapseMode="pin"
                 android:elevation="0dp"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark">
@@ -51,13 +51,12 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="30dp"
                 android:text="Popular Songs"/>
-            <com.example.uetik.ui.ExpandableHeightListView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/onlineListViewSong"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="2500px"
                 android:divider="@android:color/transparent"
                 android:dividerHeight="10.0sp"
-                android:nestedScrollingEnabled="true"
                 android:padding="8dp"
                 android:scrollbars="vertical"
                 android:visibility="visible" />

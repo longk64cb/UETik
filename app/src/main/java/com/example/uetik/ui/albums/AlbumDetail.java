@@ -9,11 +9,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -56,10 +58,8 @@ public class AlbumDetail extends AppCompatActivity {
 //        albumArt.setImageBitmap(getAlbumArtFromUri(album.getAlbumArt()));
         CollapsingToolbarLayout layout = findViewById(R.id.collapsing_toolbar_album_name);
         layout.setTitle(album.getName());
-
         SongAdapter songAdapter = new SongAdapter(album.getSongs());
         listView.setAdapter(songAdapter);
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
