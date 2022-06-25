@@ -108,7 +108,7 @@ public class HomeFragment extends Fragment implements Serializable, SearchView.O
 
     public void deleteSong(int position, View view) {
         Uri contentUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Long.parseLong(offlineSongList.get(position).getId()));
-        File file = new File(offlineSongList.get(position).getSongPath());
+        File file = new File(offlineSongList.get(position).getPath());
         Log.v("Test", file.getAbsolutePath());
         if (file.exists()) {
             Log.v("Test", "Exists");
@@ -171,7 +171,7 @@ public class HomeFragment extends Fragment implements Serializable, SearchView.O
         ArrayList<OfflineSong> searchFiles = new ArrayList<>();
         for (OfflineSong offlineSong : offlineSongList)
         {
-            if(offlineSong.getTitle().toLowerCase().contains(userInput))
+            if(offlineSong.getSongName().toLowerCase().contains(userInput))
             {
                 searchFiles.add(offlineSong);
             }

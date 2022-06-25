@@ -32,6 +32,7 @@ import com.example.uetik.databinding.FragmentOnlineBinding;
 import com.example.uetik.models.OnlineSong;
 import com.example.uetik.models.Topic;
 import com.example.uetik.ui.OnlinePlayerActivity;
+import com.example.uetik.ui.PlayerActivity;
 import com.example.uetik.ui.TopicDetail;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -165,7 +166,7 @@ public class OnlineFragment extends Fragment implements OnlineSongAdapter.SongCl
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        startActivity(new Intent(getActivity().getApplicationContext(), OnlinePlayerActivity.class)
+        startActivity(new Intent(getActivity().getApplicationContext(), PlayerActivity.class)
                 .putExtra("songName", songName)
                 .putExtra("onlineSongList", bundle)
                 .putExtra("pos", pos));

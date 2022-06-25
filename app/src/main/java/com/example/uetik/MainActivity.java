@@ -17,6 +17,7 @@ import android.view.Menu;
 import com.example.uetik.models.Album;
 import com.example.uetik.models.OnlineSong;
 import com.example.uetik.models.OfflineSong;
+import com.example.uetik.models.Song;
 import com.example.uetik.models.Topic;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     public static String TITLE_TO_FRAG = null;
     public static String ARTIST_TO_FRAG = null;
     public static String ALBUM_TO_FRAG = null;
-    public static ArrayList<OfflineSong> LIST_TO_FRAG = null;
+    public static ArrayList<? extends Song> LIST_TO_FRAG = null;
     public static int POSITION_TO_FRAG = -1;
 
     private ActivityMainBinding binding;
@@ -237,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
                 String thisId = trackCursor.getString(id);
                 String thisAlbum = trackCursor.getString(albumColumn);
 //                Log.v("Test", thisDuration);
-                offlineSongList.add(new OfflineSong(thisTitle, thisArtist, thisArt.getPath(), thisFile.getPath(), thisDuration, thisId, thisAlbum));
+                offlineSongList.add(new OfflineSong(thisTitle, thisArtist, thisArt.getPath(), thisFile.getPath(), Integer.parseInt(thisDuration), thisId, thisAlbum));
             }
             while (trackCursor.moveToNext());
         }
@@ -263,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
 //            } else {
 //                picture = BitmapFactory.decodeResource(getResources(), R.drawable.album_art );
 //            }
-            Album album = new Album(name, songs.get(0).getSongPath(), songs);
+            Album album = new Album(name, songs.get(0).getPath(), songs);
             albumList.add(album);
         });
     }

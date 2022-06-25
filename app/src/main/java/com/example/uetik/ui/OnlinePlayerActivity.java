@@ -25,6 +25,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -53,6 +54,7 @@ import com.masoudss.lib.SeekBarOnProgressChanged;
 import com.masoudss.lib.WaveformSeekBar;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
@@ -121,8 +123,13 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         bundleService.putSerializable("onlineSongList", (Serializable) onlineSongList);
         intent.putExtra("servicePosition", position)
                 .putExtra("onlineSongList", bundle);
-        startService(intent);
-
+//        startService(intent);
+        MediaPlayer mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(PORT + onlineSongList.get(position).path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         setPlayingSongView();
 
         int durationTotal = onlineSongList.get(position).duration;
@@ -376,7 +383,7 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         }
         int durationTotal = os.duration;
         endSong.setText(formatTime(durationTotal));
-        waveformSeekBar.setSampleFrom(offlineSongList.get(position).getSongPath());
+        waveformSeekBar.setSampleFrom(offlineSongList.get(position).getPath());
     }
 
     public int getRandom(int i) {

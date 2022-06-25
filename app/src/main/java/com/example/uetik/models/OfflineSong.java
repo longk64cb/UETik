@@ -3,21 +3,16 @@ package com.example.uetik.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class OfflineSong implements Parcelable {
-    public String artist;
-    public String title;
-//    private String albumArt;
-    public String songPath;
-    public String duration;
+public class OfflineSong extends Song implements Parcelable {
     public String id;
     public String albumName;
 
 
-    public OfflineSong(String title, String artist, String albumArt, String songPath, String duration, String id, String albumName) {
-        this.title = title;
-        this.artist = artist;
+    public OfflineSong(String songName, String author, String albumArt, String path, int duration, String id, String albumName) {
+        this.songName = songName;
+        this.author = author;
 //        this.albumArt = albumArt;
-        this.songPath = songPath;
+        this.path = path;
         this.duration = duration;
         this.id = id;
         this.albumName = albumName;
@@ -31,11 +26,11 @@ public class OfflineSong implements Parcelable {
         return albumName;
     }
 
-    public String getArtist() {
-        return artist;
+    public String getAuthor() {
+        return author;
     }
 
-    public String getDuration() {
+    public int getDuration() {
         return duration;
     }
 
@@ -43,21 +38,21 @@ public class OfflineSong implements Parcelable {
         return id;
     }
 
-    public String getSongPath() {
-        return songPath;
+    public String getPath() {
+        return path;
     }
 
-    public String getTitle() {
-        return title;
+    public String getSongName() {
+        return songName;
     }
 
     protected OfflineSong(Parcel in) {
 //        id = in.readInt();
-        artist = in.readString();
-        title = in.readString();
+        author = in.readString();
+        songName = in.readString();
 //        albumArt = in.readString();
-        songPath = in.readString();
-        duration = in.readString();
+        path = in.readString();
+        duration = in.readInt();
         id = in.readString();
         albumName = in.readString();
     }
@@ -65,11 +60,11 @@ public class OfflineSong implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
 //        dest.writeInt(id);
-        dest.writeString(artist);
-        dest.writeString(title);
+        dest.writeString(author);
+        dest.writeString(songName);
 //        dest.writeString(albumArt);
-        dest.writeString(songPath);
-        dest.writeString(duration);
+        dest.writeString(path);
+        dest.writeInt(duration);
         dest.writeString(id);
         dest.writeString(albumName);
     }

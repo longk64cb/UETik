@@ -50,10 +50,10 @@ public class SongAdapter extends BaseAdapter {
         TextView textArtist = myView.findViewById(R.id.txtArtistName);
         ImageView albumArt = myView.findViewById(R.id.imgSong);
         ImageView btnMenu = myView.findViewById(R.id.songMenu);
-        textSong.setText(offlineSongList.get(i).getTitle());
+        textSong.setText(offlineSongList.get(i).getSongName());
         textSong.setSelected(true);
-        textArtist.setText(offlineSongList.get(i).getArtist());
-        byte[] byteArray = getAlbumArtFromUri(offlineSongList.get(i).getSongPath());
+        textArtist.setText(offlineSongList.get(i).getAuthor());
+        byte[] byteArray = getAlbumArtFromUri(offlineSongList.get(i).getPath());
         if (byteArray != null) {
             Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
             albumArt.setImageBitmap(bmp);

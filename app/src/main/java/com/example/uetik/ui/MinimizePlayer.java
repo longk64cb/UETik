@@ -48,6 +48,7 @@ import com.example.uetik.MusicService;
 import com.example.uetik.NotificationReceiver;
 import com.example.uetik.R;
 import com.example.uetik.models.OfflineSong;
+import com.example.uetik.models.Song;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -97,7 +98,7 @@ public class MinimizePlayer extends Fragment implements ServiceConnection {
             public void onClick(View view) {
                 if (musicService != null) {
                     if (musicService.getMediaPlayer() == null) {
-                        musicService.createMediaPlayer(POSITION_TO_FRAG, LIST_TO_FRAG);
+                        musicService.createMediaPlayer(POSITION_TO_FRAG, (ArrayList<Song>) LIST_TO_FRAG);
                     }
                     musicService.nextBtnClicked();
                     if (musicService.isPlaying()) {
@@ -108,14 +109,14 @@ public class MinimizePlayer extends Fragment implements ServiceConnection {
                     if (getActivity() != null) {
                         SharedPreferences.Editor editor = getActivity().getSharedPreferences(MUSIC_LAST_PLAYED, MODE_PRIVATE)
                                 .edit();
-                        if (musicService.offlineSongs != null) {
+                        if (musicService.songs != null) {
                             Gson gson = new Gson();
-                            String json = gson.toJson(musicService.offlineSongs);
+                            String json = gson.toJson(musicService.songs);
                             editor.putString(SONG_LIST, json);
                         }
-                        editor.putString(MUSIC_FILE, musicService.offlineSongs.get(musicService.position).getSongPath());
-                        editor.putString(SONG_TITLE, musicService.offlineSongs.get(musicService.position).getTitle());
-                        editor.putString(ARTIST_NAME, musicService.offlineSongs.get(musicService.position).getArtist());
+                        editor.putString(MUSIC_FILE, musicService.songs.get(musicService.position).getPath());
+                        editor.putString(SONG_TITLE, musicService.songs.get(musicService.position).getSongName());
+                        editor.putString(ARTIST_NAME, musicService.songs.get(musicService.position).getAuthor());
 //                        editor.putString(ALBUM_ART, musicService.songs.get(musicService.position).getAlbumArt());
                         editor.apply();
                         updateLastPlayed();
@@ -142,7 +143,7 @@ public class MinimizePlayer extends Fragment implements ServiceConnection {
             public void onClick(View view) {
                 if (musicService != null) {
                     if (musicService.getMediaPlayer() == null) {
-                        musicService.createMediaPlayer(POSITION_TO_FRAG, LIST_TO_FRAG);
+                        musicService.createMediaPlayer(POSITION_TO_FRAG, (ArrayList<Song>) LIST_TO_FRAG);
                         musicService.start();
                     } else {
                         musicService.playPauseBtnClicked();
@@ -286,7 +287,7 @@ public class MinimizePlayer extends Fragment implements ServiceConnection {
                 .setAction(ACTION_NEXT);
         PendingIntent nextPending = PendingIntent.getBroadcast(getContext(), 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         Bitmap picture;
-        byte[] art = getAlbumArtFromUri(LIST_TO_FRAG.get(POSITION_TO_FRAG).getSongPath());
+        byte[] art = getAlbumArtFromUri(LIST_TO_FRAG.get(POSITION_TO_FRAG).getPath());
         if (art != null) {
             picture = BitmapFactory.decodeByteArray(art, 0, art.length);
         } else {
@@ -295,8 +296,8 @@ public class MinimizePlayer extends Fragment implements ServiceConnection {
         Notification notification = new NotificationCompat.Builder(getContext(), CHANNEL_ID_2)
                 .setSmallIcon(playPauseBtn)
                 .setLargeIcon(picture)
-                .setContentTitle(LIST_TO_FRAG.get(POSITION_TO_FRAG).getTitle())
-                .setContentText(LIST_TO_FRAG.get(POSITION_TO_FRAG).getArtist())
+                .setContentTitle(LIST_TO_FRAG.get(POSITION_TO_FRAG).getSongName())
+                .setContentText(LIST_TO_FRAG.get(POSITION_TO_FRAG).getAuthor())
                 .addAction(R.drawable.prev, "Previous", prevPending)
                 .addAction(playPauseBtn, "Pause", pausePending)
                 .addAction(R.drawable.next, "Next", nextPending)

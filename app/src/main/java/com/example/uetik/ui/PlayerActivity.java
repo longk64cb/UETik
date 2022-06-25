@@ -355,22 +355,22 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
     }
 
     private void setPlayingSongView() {
-        songUri = Uri.parse(offlineSongList.get(position).getSongPath());
+        songUri = Uri.parse(offlineSongList.get(position).getPath());
         if (musicService == null) {
             Log.v("Test", "No music service.");
         }
 //        musicService.createMediaPlayer(position);
-        txtSongName.setText(offlineSongList.get(position).getTitle());
-        txtArtistName.setText(offlineSongList.get(position).getArtist());
-        byte[] byteArray = getAlbumArtFromUri(offlineSongList.get(position).getSongPath());
+        txtSongName.setText(offlineSongList.get(position).getSongName());
+        txtArtistName.setText(offlineSongList.get(position).getAuthor());
+        byte[] byteArray = getAlbumArtFromUri(offlineSongList.get(position).getPath());
         if (byteArray != null) {
             Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
             albumArt.setImageBitmap(bmp);
         } else {
             albumArt.setImageResource(R.drawable.ic_baseline_music_note_24);
-        }        int durationTotal = Integer.parseInt((String) offlineSongList.get(position).getDuration()) / 1000;
+        }        int durationTotal = offlineSongList.get(position).getDuration() / 1000;
         endSong.setText(formatTime(durationTotal));
-        waveformSeekBar.setSampleFrom(offlineSongList.get(position).getSongPath());
+        waveformSeekBar.setSampleFrom(offlineSongList.get(position).getPath());
     }
 
     public int getRandom(int i) {
@@ -465,7 +465,7 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
                 .setAction(ACTION_NEXT);
         PendingIntent nextPending = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         Bitmap picture;
-        byte[] art = getAlbumArtFromUri(offlineSongList.get(position).getSongPath());
+        byte[] art = getAlbumArtFromUri(offlineSongList.get(position).getPath());
         if (art != null) {
             picture = BitmapFactory.decodeByteArray(art, 0, art.length);
         } else {
@@ -474,8 +474,8 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID_2)
                 .setSmallIcon(playPauseBtn)
                 .setLargeIcon(picture)
-                .setContentTitle(offlineSongList.get(position).getTitle())
-                .setContentText(offlineSongList.get(position).getArtist())
+                .setContentTitle(offlineSongList.get(position).getSongName())
+                .setContentText(offlineSongList.get(position).getAuthor())
                 .addAction(R.drawable.prev, "Previous", prevPending)
                 .addAction(playPauseBtn, "Pause", pausePending)
                 .addAction(R.drawable.next, "Next", nextPending)

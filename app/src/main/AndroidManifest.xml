@@ -49,8 +49,8 @@
             </intent-filter>
         </activity>
 
-<!--        <service android:name=".MusicService" android:enabled="true"/>-->
-        <service android:name=".OnlineMusicService" android:enabled="true"/>
+        <service android:name=".MusicService" android:enabled="true"/>
+<!--        <service android:name=".OnlineMusicService" android:enabled="true"/>-->
         
         <receiver android:name=".NotificationReceiver" android:enabled="true"
             android:exported="true">
