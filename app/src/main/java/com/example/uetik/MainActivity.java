@@ -1,6 +1,9 @@
 package com.example.uetik;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.app.DownloadManager;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -9,10 +12,14 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
+import android.widget.ProgressBar;
 
 import com.example.uetik.models.Album;
 import com.example.uetik.models.OnlineSong;
@@ -42,8 +49,14 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -56,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     public static List<OnlineSong> onlineSongList;
     public static MusicService musicService;
     public static OnlineMusicService onlineMusicService;
+    private ProgressDialog pDialog;
 
     public static final String MUSIC_LAST_PLAYED = "LAST_PLAYED";
     public static final String MUSIC_FILE = "STORED_MUSIC";
@@ -141,9 +155,9 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<File> findSong(File file) {
         ArrayList arrayList = new ArrayList();
 
-        File [] files = file.listFiles();
+        File[] files = file.listFiles();
 
-        if(files != null) {
+        if (files != null) {
 //            System.out.println(file.length());
             for (File singlefile : files) {
                 if (singlefile.isDirectory() && !singlefile.isHidden()) {
@@ -186,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
     public Uri getArtUriFromMusicFile(Context context, File file) {
         final Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        final String[] cursor_cols = { MediaStore.Audio.Media.ALBUM_ID };
+        final String[] cursor_cols = {MediaStore.Audio.Media.ALBUM_ID};
 
         final String where = MediaStore.Audio.Media.IS_MUSIC + "=1 AND " + MediaStore.Audio.Media.DATA + " = '"
                 + file.getAbsolutePath() + "'";
@@ -215,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
         Cursor trackCursor = trackResolver.query(musicUri, null, selection, null, null);
 
 
-        if(trackCursor!=null && trackCursor.moveToFirst()){
+        if (trackCursor != null && trackCursor.moveToFirst()) {
             //get columns
             int titleColumn = trackCursor.getColumnIndex
                     (android.provider.MediaStore.Audio.Media.TITLE);
@@ -286,7 +300,8 @@ public class MainActivity extends AppCompatActivity {
         String albumArt = preferences.getString(ALBUM_ART, null);
         String songList = preferences.getString(SONG_LIST, null);
         Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<OfflineSong>>() {}.getType();
+        Type type = new TypeToken<ArrayList<OfflineSong>>() {
+        }.getType();
         int position = preferences.getInt(POSITION, -1);
         if (path != null) {
             SHOW_MINI_PLAYER = true;
@@ -306,4 +321,112 @@ public class MainActivity extends AppCompatActivity {
             POSITION_TO_FRAG = -1;
         }
     }
+
+    public void downloadSong(String url) {
+        DownloadManager downloadmanager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(url);
+
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setTitle("My File");
+        request.setDescription("Downloading");//request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,"game-of-life");
+        downloadmanager.enqueue(request);
+    }
+
+//    @Override
+//    protected Dialog onCreateDialog(int id) {
+//        switch (id) {
+//            case progress_bar_type: // we set this to 0
+//                pDialog = new ProgressDialog(this);
+//                pDialog.setMessage("Downloading file. Please wait...");
+//                pDialog.setIndeterminate(false);
+//                pDialog.setMax(100);
+//                pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+//                pDialog.setCancelable(true);
+//                pDialog.show();
+//                return pDialog;
+//            default:
+//                return null;
+//        }
+//    }
+//
+//    class DownloadFileFromURL extends AsyncTask<String, String, String> {
+//
+//        /**
+//         * Before starting background thread Show Progress Bar Dialog
+//         **/
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            showDialog(progress_bar_type);
+//        }
+//
+//        /**
+//         * Downloading file in background thread
+//         **/
+//        @Override
+//        protected String doInBackground(String... f_url) {
+//            int count;
+//            try {
+//                URL url = new URL(f_url[0]);
+//                URLConnection conection = url.openConnection();
+//                conection.connect();
+//
+//                // this will be useful so that you can show a tipical 0-100%
+//                // progress bar
+//                int lenghtOfFile = conection.getContentLength();
+//
+//                // download the file
+//                InputStream input = new BufferedInputStream(url.openStream(),
+//                        8192);
+//
+//                // Output stream
+//                OutputStream output = new FileOutputStream(Environment
+//                        .getExternalStorageDirectory().toString()
+//                        + "/data/downloadedfile.kml");
+//
+//                byte data[] = new byte[1024];
+//
+//                long total = 0;
+//
+//                while ((count = input.read(data)) != -1) {
+//                    total += count;
+//                    // publishing the progress....
+//                    // After this onProgressUpdate will be called
+//                    publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+//
+//                    // writing data to file
+//                    output.write(data, 0, count);
+//                }
+//
+//                // flushing output
+//                output.flush();
+//
+//                // closing streams
+//                output.close();
+//                input.close();
+//            } catch (Exception e) {
+//                Log.e("Error: ", e.getMessage());
+//            }
+//
+//            return null;
+//        }
+//
+//        /**
+//         * Updating progress bar
+//         **/
+//        protected void onProgressUpdate(String... progress) {
+//            // setting progress percentage
+//            pDialog.setProgress(Integer.parseInt(progress[0]));
+//        }
+//
+//        /**
+//         * After completing background task Dismiss the progress dialog
+//         **/
+//        @Override
+//        protected void onPostExecute(String file_url) {
+//            // dismiss the dialog after the file was downloaded
+//            dismissDialog(progress_bar_type);
+//        }
+//    }
 }

@@ -10,10 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.uetik.MainActivity;
 import com.example.uetik.R;
 import com.example.uetik.models.OnlineSong;
 import com.example.uetik.ui.online.OnlineFragment;
@@ -78,6 +81,23 @@ public class OnlineSongAdapter extends RecyclerView.Adapter<OnlineSongAdapter.On
                 .into(holder.ivSongArt);
         holder.tvSongName.setText(os.songName);
         holder.tvSongAuthor.setText(os.author);
+        holder.ivBtnMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(fragment.getContext(), view);
+                popupMenu.getMenuInflater().inflate(R.menu.online_song_menu, popupMenu.getMenu());
+                popupMenu.show();
+                popupMenu.setOnMenuItemClickListener((item) -> {
+                    switch (item.getItemId()) {
+                        case R.id.download:
+                            Toast.makeText(fragment.getContext(), "Delete Clicked", Toast.LENGTH_SHORT).show();
+                            ((MainActivity)fragment.getActivity()).downloadSong(os.path);
+                            break;
+                    }
+                    return true;
+                });
+            }
+        });
     }
 
     public void updateList(List<OnlineSong> songs)
