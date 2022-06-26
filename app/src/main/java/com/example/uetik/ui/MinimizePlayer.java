@@ -178,13 +178,13 @@ public class MinimizePlayer extends Fragment implements ServiceConnection {
         super.onResume();
         if (SHOW_MINI_PLAYER) {
             if (PATH_TO_FRAG != null) {
-//                byte[] byteArray = getAlbumArtFromUri(PATH_TO_FRAG);
-//                if (byteArray != null) {
-//                    Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-//                    albumArt.setImageBitmap(Bitmap.createScaledBitmap(bmp, 60, 60, false));
-//                } else {
-//                    albumArt.setImageResource(R.drawable.album_art);
-//                }
+                byte[] byteArray = getAlbumArtFromUri(PATH_TO_FRAG);
+                if (byteArray != null) {
+                    Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                    albumArt.setImageBitmap(Bitmap.createScaledBitmap(bmp, 60, 60, false));
+                } else {
+                    albumArt.setImageResource(R.drawable.album_art);
+                }
                 songTitle.setText(TITLE_TO_FRAG);
                 artist.setText(ARTIST_TO_FRAG);
                 Intent intent = new Intent(getContext(), MusicService.class);
