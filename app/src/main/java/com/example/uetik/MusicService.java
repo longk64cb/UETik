@@ -271,6 +271,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
                     position = ((position + 1) % songs.size());
                     break;
                 case REPEAT_ONE:
+                    position--;
                     break;
             }
         }
