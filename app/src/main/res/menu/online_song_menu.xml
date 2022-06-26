@@ -6,4 +6,9 @@
         android:id="@+id/download"
         app:showAsAction="never"
         />
+    <item
+        android:title="Add To Favourite"
+        android:id="@+id/addFavourite"
+        app:showAsAction="never"
+        />
 </menu>

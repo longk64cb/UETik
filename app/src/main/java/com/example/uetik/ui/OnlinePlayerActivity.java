@@ -14,11 +14,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
+import android.app.DownloadManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
@@ -29,6 +31,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -37,6 +40,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +48,7 @@ import com.cleveroad.audiovisualization.AudioVisualization;
 import com.cleveroad.audiovisualization.DbmHandler;
 import com.cleveroad.audiovisualization.VisualizerDbmHandler;
 import com.example.uetik.ActionPlaying;
+import com.example.uetik.MainActivity;
 import com.example.uetik.MusicService;
 import com.example.uetik.NotificationReceiver;
 import com.example.uetik.OnlineMusicService;
@@ -65,6 +70,7 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
     View onlineActivityView;
     Button btnPlay, btnNext, btnPrev, btnPlayMode;
     TextView txtSongName, txtArtistName, currentDuration, endSong;
+    ImageView btnMenu;
 
     public static final String EXTRA_NAME = "songName";
     int position;
@@ -102,6 +108,7 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         audioVisualization = (AudioVisualization) findViewById(R.id.visualizer_view);
         waveformSeekBar = (WaveformSeekBar) findViewById(R.id.waveformSeekBar);
         topicArt = findViewById(R.id.albumArtPlayer);
+        btnMenu = findViewById(R.id.songPlayerMenu);
 
         playMode = PlayMode.REPEAT;
 
@@ -135,6 +142,28 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
 
         int durationTotal = onlineSongList.get(position).duration;
         endSong.setText(formatTime(durationTotal));
+
+        btnMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(OnlinePlayerActivity.this, view);
+                popupMenu.getMenuInflater().inflate(R.menu.online_song_menu, popupMenu.getMenu());
+                popupMenu.show();
+                popupMenu.setOnMenuItemClickListener((item) -> {
+                    switch (item.getItemId()) {
+                        case R.id.download:
+                            Toast.makeText(OnlinePlayerActivity.this, "Downloading...", Toast.LENGTH_SHORT).show();
+                            downloadSong(PORT + onlineSongList.get(position).path);
+                            break;
+                        case R.id.addFavourite:
+                            Toast.makeText(OnlinePlayerActivity.this, "Added to Favourite Playlist", Toast.LENGTH_SHORT).show();
+
+                            break;
+                    }
+                    return true;
+                });
+            }
+        });
 
         btnPlayMode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -509,6 +538,18 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         retriever.setDataSource(uri);
         byte[] art = retriever.getEmbeddedPicture();
         return art;
+    }
+
+    public void downloadSong(String url) {
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        request.setDescription("Downloading");
+        request.setMimeType("audio/MP3");
+        request.setTitle("File :");
+        request.allowScanningByMediaScanner();
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "audio.mp3");
+        DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        manager.enqueue(request);
     }
 
     private Bitmap uriToBitMap(Uri uri) {

@@ -93,6 +93,9 @@ public class OnlineSongAdapter extends RecyclerView.Adapter<OnlineSongAdapter.On
                             Toast.makeText(fragment.getContext(), "Delete Clicked", Toast.LENGTH_SHORT).show();
                             ((MainActivity)fragment.getActivity()).downloadSong(PORT + os.path);
                             break;
+                        case R.id.addFavourite:
+
+                            break;
                     }
                     return true;
                 });
