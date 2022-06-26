@@ -17,7 +17,7 @@
         android:title="@string/title_online" />
     <item
         android:id="@+id/navigation_user"
-        android:icon="@drawable/ic_albumart_foreground"
+        android:icon="@drawable/ic_baseline_account_circle_24"
         android:title="User"/>
 
 </menu>
