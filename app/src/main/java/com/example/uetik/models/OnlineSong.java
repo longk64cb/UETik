@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import java.io.Serializable;
 
-public class OnlineSong extends Song implements Parcelable {
+public class OnlineSong extends Song implements Parcelable, Serializable{
     public int songId;
     public String topic;
     public String imgPath;

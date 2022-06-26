@@ -72,7 +72,7 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
 
     private Handler handler = new Handler();
     private Thread playThread, prevThread, nextThread;
-//    private MusicService musicService;
+    private MusicService musicService;
     private MediaSessionCompat mediaSessionCompat;
 
     public static PlayMode playMode;
@@ -101,6 +101,7 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
         Intent i = getIntent();
         Bundle bundle = i.getBundleExtra("songList");
         offlineSongList = (ArrayList) bundle.getSerializable("songList");
+        Log.d("checksonglist", "val " + offlineSongList.get(position).getSongName());
         position = i.getIntExtra("pos", 0);
 
         mediaSessionCompat = new MediaSessionCompat(getBaseContext(), "My Audio");

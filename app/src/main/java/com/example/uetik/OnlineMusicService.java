@@ -4,6 +4,8 @@ import static com.example.uetik.ApplicationClass.ACTION_NEXT;
 import static com.example.uetik.ApplicationClass.ACTION_PLAY;
 import static com.example.uetik.ApplicationClass.ACTION_PREVIOUS;
 import static com.example.uetik.ApplicationClass.CHANNEL_ID_2;
+import static com.example.uetik.MainActivity.musicService;
+import static com.example.uetik.MainActivity.onlineMusicService;
 import static com.example.uetik.MainActivity.onlineSongList;
 import static com.example.uetik.adapter.OnlineSongAdapter.PORT;
 import static com.example.uetik.ui.PlayerActivity.playMode;
@@ -87,7 +89,7 @@ public class OnlineMusicService extends Service implements MediaPlayer.OnComplet
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        int myPosition = intent.getIntExtra("servicePosition", -1);
+        int myPosition = intent.getIntExtra("onlineServicePosition", -1);
         String actionName = intent.getStringExtra("ActionName");
         Bundle bundle = intent.getBundleExtra("onlineSongList");
         onlineSongs = (List<OnlineSong>) bundle.getSerializable("onlineSongList");
@@ -194,28 +196,32 @@ public class OnlineMusicService extends Service implements MediaPlayer.OnComplet
 
     public void createMediaPlayer(int positionInner) {
         position = positionInner;
-//        uri = Uri.parse(onlineSongs.get(position).path);
+        uri = Uri.parse(PORT + onlineSongs.get(position).path);
 //        Log.d("checkUri", "val: " + uri);
         SharedPreferences.Editor editor = getSharedPreferences(MUSIC_LAST_PLAYED, MODE_PRIVATE)
                 .edit();
         Gson gson = new Gson();
         String json = gson.toJson(onlineSongs);
+        Log.d("checkposition", "value:" + onlineSongs.get(position).path);
+        mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(getApplicationContext(), uri);
+            mediaPlayer.prepare();
+            Log.d("checkduration", "value:" + mediaPlayer.getDuration());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         editor.putInt(POSITION, position);
         editor.putString(SONG_LIST, json);
         editor.putString(MUSIC_FILE, onlineSongs.get(position).path);
         editor.putString(SONG_TITLE, onlineSongs.get(position).songName);
         editor.putString(ARTIST_NAME, onlineSongs.get(position).author);
-//        editor.putString(ALBUM_ART, songs.get(position).getAlbumArt());
-//        editor.put
+        editor.putString(ALBUM_ART, onlineSongs.get(position).imgPath);
+
         editor.apply();
+
 //        mediaPlayer = MediaPlayer.create(getBaseContext(), uri);
-        mediaPlayer = new MediaPlayer();
-        try {
-            mediaPlayer.setDataSource(PORT + onlineSongs.get(position).path);
-            Log.d("checkduration", "value:" + mediaPlayer.getDuration());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
 
@@ -223,7 +229,7 @@ public class OnlineMusicService extends Service implements MediaPlayer.OnComplet
         position = positionInner;
         onlineSongs = songsToPlay;
         OnlineSong os = onlineSongs.get(position);
-        uri = Uri.parse(onlineSongs.get(position).path);
+//        uri = Uri.parse(onlineSongs.get(position).path);
 
         SharedPreferences.Editor editor = getSharedPreferences(MUSIC_LAST_PLAYED, MODE_PRIVATE)
                 .edit();
@@ -231,7 +237,7 @@ public class OnlineMusicService extends Service implements MediaPlayer.OnComplet
         String json = gson.toJson(onlineSongs);
         editor.putString(SONG_LIST, json);
         editor.putInt(POSITION, position);
-        editor.putString(MUSIC_FILE, uri.getPath());
+        editor.putString(MUSIC_FILE, os.path);
         editor.putString(SONG_TITLE, os.songName);
         editor.putString(ARTIST_NAME, os.author);
 //        editor.putString(ALBUM_ART, songs.get(position).getAlbumArt());

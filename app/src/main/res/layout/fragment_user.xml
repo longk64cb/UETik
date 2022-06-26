@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.online.OnlineFragment"
+    android:theme="@style/Theme.UETik">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/Theme.UETik">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
+            app:title="User"
+            android:id="@+id/collapsing_toolbar"
+            android:elevation="0dp"
+            android:theme="@style/CustomToolbarTheme">
+
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:id="@+id/online_toolbar"
+                app:layout_collapseMode="pin"
+                android:elevation="0dp"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark">
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="126dp">
+            <Button
+                android:id="@+id/user_login_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Đăng nhập"
+                android:background="@drawable/gradient_bg"
+                android:layout_marginTop="120dp"
+                android:layout_marginHorizontal="80dp"
+                android:padding="20dp"/>
+            <Button
+                android:id="@+id/user_register_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Chưa có tài khoản?  Đăng ký"
+                android:background="@drawable/gradient_bg"
+                android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="80dp"
+                android:padding="20dp"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

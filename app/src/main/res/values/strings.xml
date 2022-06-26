@@ -4,6 +4,9 @@
     <string name="title_search">Search</string>
     <string name="title_notifications">Album</string>
     <string name="title_online">Online</string>
+    <string name="title_register">Đăng ký tài khoản mới</string>
+    <string name="title_login">Đăng nhập</string>
+    <string name="title_user">User</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

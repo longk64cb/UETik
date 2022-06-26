@@ -28,7 +28,7 @@ public class OnlineSongAdapter extends RecyclerView.Adapter<OnlineSongAdapter.On
     private final OnlineFragment fragment;
     private List<OnlineSong> onlineSongList;
     private SongClickListener mSongClickListener;
-    public static final String PORT = "http://192.168.1.3:10010";
+    public static final String PORT = "http://192.168.1.4:10010";
 
     public OnlineSongAdapter(List<OnlineSong> onlineSongList, OnlineFragment fragment, SongClickListener songClickListener){
         this.onlineSongList = onlineSongList;
@@ -91,7 +91,7 @@ public class OnlineSongAdapter extends RecyclerView.Adapter<OnlineSongAdapter.On
                     switch (item.getItemId()) {
                         case R.id.download:
                             Toast.makeText(fragment.getContext(), "Delete Clicked", Toast.LENGTH_SHORT).show();
-                            ((MainActivity)fragment.getActivity()).downloadSong(os.path);
+                            ((MainActivity)fragment.getActivity()).downloadSong(PORT + os.path);
                             break;
                     }
                     return true;

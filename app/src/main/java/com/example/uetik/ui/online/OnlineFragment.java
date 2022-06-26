@@ -166,7 +166,9 @@ public class OnlineFragment extends Fragment implements OnlineSongAdapter.SongCl
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        startActivity(new Intent(getActivity().getApplicationContext(), PlayerActivity.class)
+        Log.d("CHECKONLINEFRAGMENT", "VAL: " + bundle.getSerializable("onlineSongList"));
+
+        startActivity(new Intent(getActivity().getApplicationContext(), OnlinePlayerActivity.class)
                 .putExtra("songName", songName)
                 .putExtra("onlineSongList", bundle)
                 .putExtra("pos", pos));

@@ -44,6 +44,7 @@ import com.cleveroad.audiovisualization.AudioVisualization;
 import com.cleveroad.audiovisualization.DbmHandler;
 import com.cleveroad.audiovisualization.VisualizerDbmHandler;
 import com.example.uetik.ActionPlaying;
+import com.example.uetik.MusicService;
 import com.example.uetik.NotificationReceiver;
 import com.example.uetik.OnlineMusicService;
 import com.example.uetik.PlayMode;
@@ -77,7 +78,7 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
 
     private Handler handler = new Handler();
     private Thread playThread, prevThread, nextThread;
-    //    private MusicService musicService;
+//    private MusicService musicService;
     private OnlineMusicService onlineMusicService;
     private MediaSessionCompat mediaSessionCompat;
 
@@ -108,7 +109,7 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         Bundle bundle = i.getBundleExtra("onlineSongList");
         onlineSongList = (List<OnlineSong>) bundle.getSerializable("onlineSongList");
         position = i.getIntExtra("pos", 0);
-        Log.d("OPA", "val: " + onlineSongList);
+        Log.d("OPA", "val: " + onlineSongList.get(1).imgPath);
         mediaSessionCompat = new MediaSessionCompat(getBaseContext(), "My Audio");
 
         showNotification(R.drawable.pause);
@@ -121,9 +122,9 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         Intent intent = new Intent(this, OnlineMusicService.class);
         Bundle bundleService = new Bundle();
         bundleService.putSerializable("onlineSongList", (Serializable) onlineSongList);
-        intent.putExtra("servicePosition", position)
+        intent.putExtra("onlineServicePosition", position)
                 .putExtra("onlineSongList", bundle);
-//        startService(intent);
+        startService(intent);
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
             mediaPlayer.setDataSource(PORT + onlineSongList.get(position).path);
@@ -367,6 +368,8 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
 
     private void setPlayingSongView() {
         OnlineSong os = onlineSongList.get(position);
+        Log.d("checkPlayingSongView", "img:" + os.imgPath + " path: " + os.path + " name: " + os.songName);
+
         songUri = Uri.parse(PORT + os.path);
         imgUri = Uri.parse(PORT + os.imgPath);
         if (onlineMusicService == null) {
@@ -418,12 +421,12 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         onlineMusicService = myBinder.getService();
         onlineMusicService.setCallBack(this);
         Toast.makeText(this, "Connected" + onlineMusicService, Toast.LENGTH_SHORT).show();
-//        if (musicService.isPlaying()) {
-//            musicService.stop();
-//            musicService.release();
+//        if (onlineMusicService.isPlaying()) {
+//            onlineMusicService.stop();
+//            onlineMusicService.release();
 //        }
-//        musicService.createMediaPlayer(position);
-//        musicService.start();
+//        onlineMusicService.createMediaPlayer(position);
+//        onlineMusicService.start();
 
         onlineMusicService.onCompleted();
         showNotification(R.drawable.pause);
@@ -438,8 +441,8 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
 //        waveformSeekBar.setOnProgressChanged(new SeekBarOnProgressChanged() {
 //            @Override
 //            public void onProgressChanged(@NonNull WaveformSeekBar waveformSeekBar, float v, boolean b) {
-//                if (musicService != null && b) {
-//                    musicService.seekTo((int)v * 1000);
+//                if (onlineMusicService != null && b) {
+//                    onlineMusicService.seekTo((int)v * 1000);
 //                }
 //            }
 //        });
@@ -477,16 +480,16 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         Intent nextIntent = new Intent(this, NotificationReceiver.class)
                 .setAction(ACTION_NEXT);
         PendingIntent nextPending = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        Bitmap picture;
-        byte[] art = getAlbumArtFromUri(PORT + onlineSongList.get(position).path);
-        if (art != null) {
-            picture = BitmapFactory.decodeByteArray(art, 0, art.length);
-        } else {
-            picture = BitmapFactory.decodeResource(getResources(), R.drawable.album_art );
-        }
+//        Bitmap picture;
+//        byte[] art = getAlbumArtFromUri(PORT + onlineSongList.get(position).path);
+//        if (art != null) {
+//            picture = BitmapFactory.decodeByteArray(art, 0, art.length);
+//        } else {
+//            picture = BitmapFactory.decodeResource(getResources(), R.drawable.album_art );
+//        }
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID_2)
                 .setSmallIcon(playPauseBtn)
-                .setLargeIcon(picture)
+//                .setLargeIcon(picture)
                 .setContentTitle(onlineSongList.get(position).songName)
                 .setContentText(onlineSongList.get(position).author)
                 .addAction(R.drawable.prev, "Previous", prevPending)

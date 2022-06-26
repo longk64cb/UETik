@@ -5,9 +5,12 @@ import static com.example.uetik.ApplicationClass.ACTION_PLAY;
 import static com.example.uetik.ApplicationClass.ACTION_PREVIOUS;
 import static com.example.uetik.ApplicationClass.CHANNEL_ID_2;
 import static com.example.uetik.MainActivity.getAlbumArtFromUri;
+import static com.example.uetik.MainActivity.musicService;
 import static com.example.uetik.MainActivity.offlineSongList;
+import static com.example.uetik.MainActivity.onlineSongList;
 import static com.example.uetik.adapter.OnlineSongAdapter.PORT;
 import static com.example.uetik.ui.PlayerActivity.playMode;
+import static com.example.uetik.MainActivity.onlineMusicService;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -30,11 +33,13 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.example.uetik.models.OfflineSong;
+import com.example.uetik.models.OnlineSong;
 import com.example.uetik.models.Song;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MusicService extends Service implements MediaPlayer.OnCompletionListener {
@@ -42,7 +47,8 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     private MediaPlayer mediaPlayer;
     private MediaSessionCompat mediaSessionCompat;
     public ArrayList<? extends Song> songs = new ArrayList<>();
-    private Uri uri;
+    public List<OnlineSong> onlineSongs;
+    private Uri onluri, offuri;
     public int position = 0;
     ActionPlaying actionPlaying;
     public static final String MUSIC_LAST_PLAYED = "LAST_PLAYED";
@@ -57,6 +63,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     public void onCreate() {
         super.onCreate();
         songs = offlineSongList;
+//        Log.d("CHECKOFFLINEMEDIAPLAYER", "val: " + mediaPlayer);
         mediaSessionCompat = new MediaSessionCompat(this, "My Audio");
     }
 
@@ -195,14 +202,15 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
     public void createMediaPlayer(int positionInner) {
         position = positionInner;
-        uri = Uri.parse(songs.get(position).getPath());
+        offuri = Uri.parse(songs.get(position).getPath());
+//        onluri = Uri.parse(PORT + onlineSongs.get(position).path);
         SharedPreferences.Editor editor = getSharedPreferences(MUSIC_LAST_PLAYED, MODE_PRIVATE)
                 .edit();
         Gson gson = new Gson();
         String json = gson.toJson(songs);
         editor.putInt(POSITION, position);
         editor.putString(SONG_LIST, json);
-        editor.putString(MUSIC_FILE, uri.getPath());
+        editor.putString(MUSIC_FILE, offuri.getPath());
         editor.putString(SONG_TITLE, songs.get(position).getSongName());
         editor.putString(ARTIST_NAME, songs.get(position).getAuthor());
 //        editor.putString(ALBUM_ART, songs.get(position).getAlbumArt());
@@ -210,34 +218,38 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         editor.apply();
         if (songs.size() > 0) {
             if (songs.get(0) instanceof OfflineSong) {
-                mediaPlayer = MediaPlayer.create(getBaseContext(), uri);
-            } else {
-                try {
-                    mediaPlayer.setDataSource(PORT + songs.get(position).path);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                mediaPlayer = MediaPlayer.create(getBaseContext(), offuri);
             }
+//            else {
+//                try {
+//                    mediaPlayer.setDataSource(getApplicationContext(), onluri);
+//                    mediaPlayer.prepare();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
         }
         Log.d("checkduration", "value:" + mediaPlayer.getDuration());
+        Log.d("checkpath", "val: " + offuri.getPath());
     }
 
     public void createMediaPlayer(int positionInner, ArrayList<Song> songsToPlay) {
         position = positionInner;
         songs = songsToPlay;
 //        uri = Uri.parse(offlineSongs.get(position).getSongPath());
+
         SharedPreferences.Editor editor = getSharedPreferences(MUSIC_LAST_PLAYED, MODE_PRIVATE)
                 .edit();
         Gson gson = new Gson();
         String json = gson.toJson(songs);
         editor.putString(SONG_LIST, json);
         editor.putInt(POSITION, position);
-        editor.putString(MUSIC_FILE, uri.getPath());
+        editor.putString(MUSIC_FILE, offuri.getPath());
         editor.putString(SONG_TITLE, songs.get(position).getSongName());
         editor.putString(ARTIST_NAME, songs.get(position).getAuthor());
 //        editor.putString(ALBUM_ART, songs.get(position).getAlbumArt());
         editor.apply();
-        mediaPlayer = MediaPlayer.create(getBaseContext(), uri);
+        mediaPlayer = MediaPlayer.create(getBaseContext(), offuri);
     }
 
     public MediaPlayer getMediaPlayer() {
