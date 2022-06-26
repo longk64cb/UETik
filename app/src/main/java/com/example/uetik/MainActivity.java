@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -20,14 +21,26 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.uetik.models.Album;
 import com.example.uetik.models.OnlineSong;
 import com.example.uetik.models.OfflineSong;
 import com.example.uetik.models.Song;
 import com.example.uetik.models.Topic;
+import com.example.uetik.models.User;
+import com.example.uetik.ui.PlaylistDetail;
+import com.example.uetik.ui.user.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -58,11 +71,13 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-
+    public static User user = new User();
     public static ArrayList<OfflineSong> offlineSongList = new ArrayList<>();
     public static ArrayList<Album> albumList = new ArrayList<>();
     public static List<Topic> topicList;
@@ -334,6 +349,42 @@ public class MainActivity extends AppCompatActivity {
         manager.enqueue(request);
     }
 
+    public void addToFavourite(int pos){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://192.168.1.4:10010/add-song", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("checksignup", response);
+                if (response.equals("true")) {
+                } else if (response.equals("false")) {
+                    Toast.makeText(getApplicationContext(), "Tài khoản đã tồn tại", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), error.toString().trim(), Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data = new HashMap<>();
+                data.put("song-id", String.valueOf(onlineSongList.get(pos).songId));
+                return data;
+            }
+            @Nullable
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> data = new HashMap<>();
+                data.put("user-name", user.username);
+                data.put("token", user.userToken);
+                return data;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
+        Log.d("check2", stringRequest.toString());
+    }
 //    @Override
 //    protected Dialog onCreateDialog(int id) {
 //        switch (id) {

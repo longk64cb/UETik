@@ -41,6 +41,9 @@
             android:name=".ui.TopicDetail"
             android:theme="@style/Theme.UETik" />
         <activity
+            android:name=".ui.PlaylistDetail"
+            android:theme="@style/Theme.UETik" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"

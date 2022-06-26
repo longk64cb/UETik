@@ -8,9 +8,11 @@ import static com.example.uetik.ApplicationClass.ACTION_PREVIOUS;
 import static com.example.uetik.ApplicationClass.CHANNEL_ID_2;
 //import static com.example.uetik.MainActivity.musicService;
 import static com.example.uetik.MainActivity.offlineSongList;
+import static com.example.uetik.MainActivity.user;
 import static com.example.uetik.adapter.OnlineSongAdapter.PORT;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
@@ -44,6 +46,13 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.cleveroad.audiovisualization.AudioVisualization;
 import com.cleveroad.audiovisualization.DbmHandler;
 import com.cleveroad.audiovisualization.VisualizerDbmHandler;
@@ -62,7 +71,9 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class OnlinePlayerActivity extends AppCompatActivity implements ActionPlaying, ServiceConnection {
@@ -116,7 +127,7 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         Bundle bundle = i.getBundleExtra("onlineSongList");
         onlineSongList = (List<OnlineSong>) bundle.getSerializable("onlineSongList");
         position = i.getIntExtra("pos", 0);
-        Log.d("OPA", "val: " + onlineSongList.get(1).imgPath);
+//        Log.d("OPA", "val: " + onlineSongList.get(1).imgPath);
         mediaSessionCompat = new MediaSessionCompat(getBaseContext(), "My Audio");
 
         showNotification(R.drawable.pause);
@@ -157,7 +168,7 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
                             break;
                         case R.id.addFavourite:
                             Toast.makeText(OnlinePlayerActivity.this, "Added to Favourite Playlist", Toast.LENGTH_SHORT).show();
-
+                            addToFavourite(onlineSongList.get(position).songId);
                             break;
                     }
                     return true;
@@ -550,6 +561,44 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "audio.mp3");
         DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
+    }
+
+    public void addToFavourite(int position){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://192.168.1.4:10010/add-song", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("checksignup", response);
+                if (response.equals("true")) {
+                } else if (response.equals("false")) {
+                    Toast.makeText(getApplicationContext(), "Tài khoản đã tồn tại", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), error.toString().trim(), Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data = new HashMap<>();
+                data.put("song-id", String.valueOf(onlineSongList.get(position).songId));
+                return data;
+            }
+            @Nullable
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> data = new HashMap<>();
+                data.put("user-name", user.username);
+                data.put("token", user.userToken);
+                return data;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
+        Log.d("check2", stringRequest.toString());
+
     }
 
     private Bitmap uriToBitMap(Uri uri) {
