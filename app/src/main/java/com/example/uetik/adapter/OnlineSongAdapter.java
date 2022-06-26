@@ -90,11 +90,11 @@ public class OnlineSongAdapter extends RecyclerView.Adapter<OnlineSongAdapter.On
                 popupMenu.setOnMenuItemClickListener((item) -> {
                     switch (item.getItemId()) {
                         case R.id.download:
-                            Toast.makeText(fragment.getContext(), "Delete Clicked", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(fragment.getContext(), "Download Clicked", Toast.LENGTH_SHORT).show();
                             ((MainActivity)fragment.getActivity()).downloadSong(PORT + os.path);
                             break;
                         case R.id.addFavourite:
-
+                            ((MainActivity)fragment.getActivity()).addToFavourite(os.songId);
                             break;
                     }
                     return true;
