@@ -65,6 +65,7 @@ import com.example.uetik.PlayMode;
 import com.example.uetik.R;
 import com.example.uetik.databinding.OnlineActivityPlayerBinding;
 import com.example.uetik.models.OnlineSong;
+import com.example.uetik.ui.user.LoginActivity;
 import com.masoudss.lib.SeekBarOnProgressChanged;
 import com.masoudss.lib.WaveformSeekBar;
 import com.squareup.picasso.Picasso;
@@ -167,8 +168,8 @@ public class OnlinePlayerActivity extends AppCompatActivity implements ActionPla
                             downloadSong(PORT + onlineSongList.get(position).path);
                             break;
                         case R.id.addFavourite:
-                            Toast.makeText(OnlinePlayerActivity.this, "Added to Favourite Playlist", Toast.LENGTH_SHORT).show();
                             addToFavourite(onlineSongList.get(position).songId);
+                            Toast.makeText(OnlinePlayerActivity.this, "Đã thêm vào danh sách bài hát", Toast.LENGTH_SHORT).show();
                             break;
                     }
                     return true;

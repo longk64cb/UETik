@@ -41,7 +41,7 @@
             android:name=".ui.TopicDetail"
             android:theme="@style/Theme.UETik" />
         <activity
-            android:name=".ui.PlaylistDetail"
+            android:name=".ui.user.PlaylistDetail"
             android:theme="@style/Theme.UETik" />
         <activity
             android:name=".MainActivity"

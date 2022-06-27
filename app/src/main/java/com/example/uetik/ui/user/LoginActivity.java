@@ -2,7 +2,6 @@ package com.example.uetik.ui.user;
 
 import static com.example.uetik.MainActivity.user;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -21,14 +19,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uetik.R;
-import com.example.uetik.models.User;
-import com.example.uetik.ui.PlaylistDetail;
-import com.example.uetik.ui.TopicDetail;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.example.uetik.ui.OnlinePlayerActivity;
+import com.example.uetik.ui.PlayerActivity;
 
 public class LoginActivity extends AppCompatActivity {
     private String url = "http://192.168.1.4:10010/login";
@@ -42,7 +34,6 @@ public class LoginActivity extends AppCompatActivity {
 
         loginUsername = (EditText) findViewById(R.id.login_username);
         loginPassword = (EditText) findViewById(R.id.login_password);
-
         btnLogin = findViewById(R.id.login_button);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(String response) {
                     Log.d("checklogin", "val: "+  response);
-                    if (response.charAt(0) == '[') { // doan nay la sao
+                    if (response.charAt(0) == '[') {
                         user.userToken = response;
                         user.username = username;
                         user.password = password;
@@ -78,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Toast.makeText(getApplicationContext(), error.toString().trim(), Toast.LENGTH_SHORT).show();
+                    Log.d("checkerror", error.toString());
                 }
             });
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());

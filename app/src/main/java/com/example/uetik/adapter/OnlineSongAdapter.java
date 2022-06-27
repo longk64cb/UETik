@@ -1,8 +1,10 @@
 package com.example.uetik.adapter;
 
 import static com.example.uetik.MainActivity.getAlbumArtFromUri;
+import static com.example.uetik.MainActivity.user;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -20,6 +22,7 @@ import com.example.uetik.MainActivity;
 import com.example.uetik.R;
 import com.example.uetik.models.OnlineSong;
 import com.example.uetik.ui.online.OnlineFragment;
+import com.example.uetik.ui.user.LoginActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -94,7 +97,12 @@ public class OnlineSongAdapter extends RecyclerView.Adapter<OnlineSongAdapter.On
                             ((MainActivity)fragment.getActivity()).downloadSong(PORT + os.path);
                             break;
                         case R.id.addFavourite:
-                            ((MainActivity)fragment.getActivity()).addToFavourite(os.songId);
+                            if(user == null){
+                                Toast.makeText(fragment.getContext(), "Bạn phải đăng nhập trước", Toast.LENGTH_SHORT).show();
+                            } else {
+                                ((MainActivity)fragment.getActivity()).addToFavourite(os.songId);
+                                Toast.makeText(fragment.getContext(), "Đã thêm vào danh sách bài hát", Toast.LENGTH_SHORT).show();
+                            }
                             break;
                     }
                     return true;

@@ -1,4 +1,4 @@
-package com.example.uetik.ui;
+package com.example.uetik.ui.user;
 
 import static com.example.uetik.MainActivity.onlineSongList;
 import static com.example.uetik.MainActivity.topicList;
@@ -29,6 +29,7 @@ import com.example.uetik.adapter.OnlineSongAdapter;
 import com.example.uetik.models.OnlineSong;
 import com.example.uetik.models.Topic;
 import com.example.uetik.models.User;
+import com.example.uetik.ui.OnlinePlayerActivity;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -94,6 +95,11 @@ public class PlaylistDetail extends AppCompatActivity {
         OnlineSongAdapter playlistSongAdapter = new OnlineSongAdapter(playlistSongList);
         listView.setAdapter(playlistSongAdapter);
         Log.d("check", "val:" + playlistSongList);
+        if (playlistSongList.size() == 0) {
+            topicArt.setImageResource(R.drawable.ic_baseline_music_note_24);
+        } else {
+            Picasso.with(topicArt.getContext()).load(PORT + playlistSongList.get(0).imgPath).into(topicArt);
+        }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
